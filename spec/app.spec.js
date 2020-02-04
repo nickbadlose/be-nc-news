@@ -168,7 +168,7 @@ describe("/api", () => {
         });
       });
 
-      describe.only("/comments", () => {
+      describe("/comments", () => {
         describe("POST", () => {
           it("POST: returns 201 and an object containing the posted comment", () => {
             const comment = {
@@ -203,6 +203,96 @@ describe("/api", () => {
                 expect(msg).to.equal("Not found!");
               });
           });
+          it("POST: returns 406 Invalid request! when passed an invalid article_id", () => {
+            const comment = {
+              username: "butter_bridge",
+              body: "I'll butter your bridge"
+            };
+            return request(app)
+              .post("/api/articles/abc/comments")
+              .send(comment)
+              .expect(406)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Invalid request!");
+              });
+          });
+          it("POST: returns 422 Incomplete request! when passed the wrong or no username/body key", () => {
+            const comment = {
+              hello: "butter_bridge",
+              byebye: "I'll butter your bridge"
+            };
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send(comment)
+              .expect(422)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Incomplete request!");
+              });
+          });
+          it("POST: returns 406 Invalid request! when passed the wrong or no username/body key", () => {
+            const comment = {
+              username: 111,
+              body: ["I'll butter your bridge"]
+            };
+            return request(app)
+              .post("/api/articles/1/comments")
+              .send(comment)
+              .expect(406)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Invalid request!");
+              });
+          });
+        });
+
+        describe.only("GET", () => {
+          it("GET: returns 200 and an object containing an array of comments", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body).to.contain.keys("comments");
+                expect(body.comments[0]).to.contain.keys(
+                  "comment_id",
+                  "author",
+                  "votes",
+                  "created_at",
+                  "body"
+                );
+              });
+          });
+          it("GET: returns 200 and an object with a key of comments containing an empty array when passed an article_id referencing an article with no comments", () => {
+            return request(app)
+              .get("/api/articles/2/comments")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments.length).to.equal(0);
+              });
+          });
+          it("GET: returns 404 Not found! when passed an article_id that doesn't exist", () => {
+            return request(app)
+              .get("/api/articles/100/comments")
+              .expect(404)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Not found!");
+              });
+          });
+          it("GET: returns 406 Invalid request! when passed an article_id that doesn't exist", () => {
+            return request(app)
+              .get("/api/articles/abc/comments")
+              .expect(406)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Invalid request!");
+              });
+          });
+          // it("GET: returns 406 Invalid request! when passed an article_id that doesn't exist", () => {
+          //   return request(app)
+          //     .get("/api/articles/abc/comment")
+          //     .expect(404)
+          //     .then(({ body }) => {
+          //       console.log(body); ***** testing for wrong spelling of end of route ........... need to do?
+          //       expect(msg).to.equal("Invalid request!");
+          //     });
+          // });
         });
       });
     });

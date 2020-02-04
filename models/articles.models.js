@@ -36,10 +36,36 @@ exports.editArticleById = (article_id, votes) => {
 };
 
 exports.addCommentByArticleId = (article_id, author, body) => {
+  if (author === undefined || body === undefined) {
+    return Promise.reject({ status: 422, msg: "Incomplete request!" });
+  }
+  if (typeof body !== "string" || typeof author !== "string") {
+    return Promise.reject({ status: 406, msg: "Invalid request!" });
+  }
   return connection("comments")
     .insert({ article_id, author, body })
     .returning("*")
     .then(commentArr => {
       return commentArr;
     });
+};
+
+exports.fetchCommentsByArticleId = article_id => {
+  const promises = [
+    connection("comments").where({ article_id }),
+    connection("articles").where({ article_id })
+  ];
+  return Promise.all(promises).then(([commentsArr, articleArr]) => {
+    const formattedComments = commentsArr.map(comment => {
+      delete comment.article_id;
+      return comment;
+    });
+
+    if (!commentsArr.length) {
+      if (!articleArr.length) {
+        return Promise.reject({ status: 404, msg: "Not found!" });
+      } else return formattedComments;
+    }
+    return formattedComments;
+  });
 };

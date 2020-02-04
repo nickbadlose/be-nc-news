@@ -3,8 +3,12 @@ exports.pSQLErrors = (err, req, res, next) => {
     console.log("in pSQLErrors:", err.code);
     const errRef = {
       "22P02": { status: 406, msg: "Invalid request!" },
-      "23503": { status: 404, msg: "Not found!" }
+      "23503": { status: 404, msg: "Not found!" },
+      "23502": { status: 422, msg: "Incomplete request!" }
     };
+    if (errRef[err.code] === undefined) {
+      res.status(404).send({ msg: "General error!" });
+    }
     res.status(errRef[err.code].status).send({ msg: errRef[err.code].msg });
   } else next(err);
 };
