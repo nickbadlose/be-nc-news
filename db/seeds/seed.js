@@ -14,8 +14,12 @@ exports.seed = function(knex) {
   const usersInsertions = knex("users")
     .insert(userData)
     .returning("*");
-
-  return Promise.all([topicsInsertions, usersInsertions])
+  return knex.migrate
+    .rollback()
+    .then(() => knex.migrate.latest())
+    .then(() => {
+      return Promise.all([topicsInsertions, usersInsertions]);
+    })
     .then(([topicRows, userRows]) => {
       const formattedArticleData = formatDates(articleData);
       const promises = [
@@ -39,7 +43,5 @@ exports.seed = function(knex) {
         .insert(formattedComments)
         .returning("*");
     })
-    .then(commentRows => {
-      console.log(commentRows);
-    });
+    .then(commentRows => {});
 };
