@@ -81,7 +81,6 @@ exports.fetchArticles = ({ sort_by, order, username, topic }) => {
   if (order !== "asc" && order !== "desc") {
     return Promise.reject({ status: 406, msg: "Invalid request!" });
   }
-  console.log(topic);
   const promises = [
     connection("articles")
       .select("articles.*")
@@ -99,9 +98,8 @@ exports.fetchArticles = ({ sort_by, order, username, topic }) => {
 
   return Promise.all(promises).then(
     ([articlesArr, userPredicate, topicPredicate]) => {
-      console.log(userPredicate);
       if (!userPredicate || !topicPredicate) {
-        return Promise.reject({ status: 406, msg: "Invalid request!" });
+        return Promise.reject({ status: 404, msg: "Not found!" });
       }
       return articlesArr;
     }

@@ -113,7 +113,7 @@ describe("/api", () => {
             expect(articles).to.be.sortedBy("article_id", { descending: true });
           });
       });
-      it("returns 406 Invalid request when passed a sort_by query that doesn't exist", () => {
+      it("GET: returns 406 Invalid request when passed an invalid sort_by query", () => {
         return request(app)
           .get("/api/articles?sort_by=cantSortThis!")
           .expect(406)
@@ -131,7 +131,7 @@ describe("/api", () => {
             });
           });
       });
-      it("returns 406 Invalid request when passed a order query that doesn't exist", () => {
+      it("GET: returns 406 Invalid request when passed an invalid order query", () => {
         return request(app)
           .get("/api/articles?order=cantOrderThis!")
           .expect(406)
@@ -150,15 +150,15 @@ describe("/api", () => {
             expect(output).to.be.true;
           });
       });
-      it("returns 406 Invalid request when passed a username query that doesn't exist", () => {
+      it("GET: returns 404 Not found! when passed an username that doesn't exist", () => {
         return request(app)
           .get("/api/articles?username=notAUser")
-          .expect(406)
+          .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Invalid request!");
+            expect(msg).to.equal("Not found!");
           });
       });
-      it("returns 200 and an object with an articles key containing an empty array when passed a valid username that has not wrote any articles", () => {
+      it("GET: returns 200 and an object with an articles key containing an empty array when passed a valid username that has not wrote any articles", () => {
         return request(app)
           .get("/api/articles?username=lurker")
           .expect(200)
@@ -177,15 +177,15 @@ describe("/api", () => {
             expect(output).to.be.true;
           });
       });
-      it("returns 406 Invalid request when passed a topic query that doesn't exist", () => {
+      it("GET: returns 404 Not found! when passed a topic query that doesn't exist", () => {
         return request(app)
           .get("/api/articles?topic=notATopic")
-          .expect(406)
+          .expect(404)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Invalid request!");
+            expect(msg).to.equal("Not found!");
           });
       });
-      it("returns 200 and an object with an articles key containing an empty array when passed a valid topic that has not wrote any articles", () => {
+      it("GET: returns 200 and an object with an articles key containing an empty array when passed a valid topic that has no articles referencing it", () => {
         return request(app)
           .get("/api/articles?topic=paper")
           .expect(200)
@@ -356,7 +356,7 @@ describe("/api", () => {
                 expect(msg).to.equal("Incomplete request!");
               });
           });
-          it("POST: returns 406 Invalid request! when passed the wrong or no username/body key", () => {
+          it("POST: returns 406 Invalid request! when passed an invalid username/body value", () => {
             const comment = {
               username: 111,
               body: ["I'll butter your bridge"]
@@ -405,7 +405,7 @@ describe("/api", () => {
                 expect(msg).to.equal("Not found!");
               });
           });
-          it("GET: returns 406 Invalid request! when passed an article_id that doesn't exist", () => {
+          it("GET: returns 406 Invalid request! when passed an invalid article_id", () => {
             return request(app)
               .get("/api/articles/abc/comments")
               .expect(406)
@@ -436,7 +436,9 @@ describe("/api", () => {
               .get("/api/articles/1/comments?order=desc")
               .expect(200)
               .then(({ body }) => {
-                expect(body.comments).to.be.sorted({ descending: true });
+                expect(body.comments).to.be.sortedBy("created_at", {
+                  descending: true
+                });
               });
           });
           it("GET: returns 406 Invalid request! when passed a sort_by query that doesn't exist", () => {
@@ -460,7 +462,7 @@ describe("/api", () => {
     });
   });
 
-  describe.only("/comments", () => {
+  describe("/comments", () => {
     describe("/:comment_id", () => {
       describe("PATCH", () => {
         it("PATCH: returns 202 and an object containing the updated comment when passed a comment_id", () => {
