@@ -4,6 +4,9 @@ const {
 } = require("../models/comments.models");
 
 exports.patchCommentById = (req, res, next) => {
+  if (Object.keys(req.body).length > 1) {
+    next({ status: 422, msg: "Unprocessable entity!" });
+  }
   const { comment_id } = req.params;
   const { inc_votes } = req.body;
   updateCommentById(comment_id, inc_votes)

@@ -18,6 +18,9 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.updateArticleById = (req, res, next) => {
+  if (Object.keys(req.body).length > 1) {
+    next({ status: 422, msg: "Unprocessable entity!" });
+  }
   const { article_id } = req.params;
   const { inc_votes } = req.body;
   editArticleById(article_id, inc_votes)

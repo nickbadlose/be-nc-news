@@ -5,7 +5,7 @@ exports.pSQLErrors = (err, req, res, next) => {
       "22P02": { status: 406, msg: "Invalid request!" },
       "23503": { status: 404, msg: "Not found!" },
       "42703": { status: 406, msg: "Invalid request!" },
-      "23502": { status: 422, msg: "Incomplete request!" }
+      "23502": { status: 422, msg: "Unprocessable entity!" }
     };
     if (errRef[err.code] === undefined) {
       res.status(404).send({ msg: "General error!" });
@@ -18,4 +18,8 @@ exports.generalErrors = (err, req, res, next) => {
   const { status, msg } = err;
   // console.log("in general errors:", err);
   res.status(status).send({ msg });
+};
+
+exports.send405Error = (req, res, next) => {
+  res.status(405).send({ msg: "method not allowed" });
 };

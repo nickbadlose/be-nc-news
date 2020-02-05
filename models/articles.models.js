@@ -19,7 +19,7 @@ exports.fetchArticleById = article_id => {
 
 exports.editArticleById = (article_id, votes) => {
   if (votes === undefined) {
-    return Promise.reject({ status: 422, msg: "Incomplete request!" });
+    return Promise.reject({ status: 422, msg: "Unprocessable entity!" });
   }
   return connection("articles")
     .where({ article_id })
@@ -35,7 +35,7 @@ exports.editArticleById = (article_id, votes) => {
 
 exports.addCommentByArticleId = (article_id, author, body) => {
   if (author === undefined || body === undefined) {
-    return Promise.reject({ status: 422, msg: "Incomplete request!" });
+    return Promise.reject({ status: 422, msg: "Unprocessable entity!" });
   }
   if (typeof body !== "string" || typeof author !== "string") {
     return Promise.reject({ status: 406, msg: "Invalid request!" });

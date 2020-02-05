@@ -34,6 +34,21 @@ describe("/api", () => {
           });
       });
     });
+
+    describe("INVALID METHODS", () => {
+      it("status:405", () => {
+        const invalidMethods = ["patch", "post", "put", "delete"];
+        const methodPromises = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/topics")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
+    });
   });
 
   describe("/users", () => {
@@ -48,6 +63,21 @@ describe("/api", () => {
               expect(user).to.contain.keys("username", "avatar_url", "name");
             });
           });
+      });
+    });
+
+    describe("INVALID METHODS", () => {
+      it("status:405", () => {
+        const invalidMethods = ["patch", "post", "put", "delete"];
+        const methodPromises = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/users")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
       });
     });
 
@@ -69,6 +99,21 @@ describe("/api", () => {
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("Not found!");
             });
+        });
+      });
+
+      describe("INVALID METHODS", () => {
+        it("status:405", () => {
+          const invalidMethods = ["patch", "post", "put", "delete"];
+          const methodPromises = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/users/butter_bridge")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          return Promise.all(methodPromises);
         });
       });
     });
@@ -195,6 +240,21 @@ describe("/api", () => {
       });
     });
 
+    describe("INVALID METHODS", () => {
+      it("status:405", () => {
+        const invalidMethods = ["patch", "post", "put", "delete"];
+        const methodPromises = invalidMethods.map(method => {
+          return request(app)
+            [method]("/api/articles")
+            .expect(405)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("method not allowed");
+            });
+        });
+        return Promise.all(methodPromises);
+      });
+    });
+
     describe("/:article_id", () => {
       describe("GET", () => {
         it("GET: returns 200 and an object containing an article relating to the passed article_id", () => {
@@ -273,14 +333,14 @@ describe("/api", () => {
               expect(msg).to.equal("Invalid request!");
             });
         });
-        it("PATCH: returns 422 Incomplete request! when passed a wrong or no inc_votes key", () => {
+        it("PATCH: returns 422 Unprocessable entity! when passed a wrong or no inc_votes key", () => {
           const votes = { hello: 1 };
           return request(app)
             .patch("/api/articles/1")
             .send(votes)
             .expect(422)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Incomplete request!");
+              expect(msg).to.equal("Unprocessable entity!");
             });
         });
         it("PATCH: returns 406 Invalid request! when passed an invalid inc_votes value", () => {
@@ -292,6 +352,31 @@ describe("/api", () => {
             .then(({ body: { msg } }) => {
               expect(msg).to.equal("Invalid request!");
             });
+        });
+        it("PATCH: returns 422 Unprocessable entity! when passed a body with an inc_votes key but other keys also", () => {
+          const votes = { inc_votes: 1, job: "errorHandler" };
+          return request(app)
+            .patch("/api/articles/1")
+            .send(votes)
+            .expect(422)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Unprocessable entity!");
+            });
+        });
+      });
+
+      describe("INVALID METHODS", () => {
+        it("status:405", () => {
+          const invalidMethods = ["post", "put", "delete"];
+          const methodPromises = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/articles/1")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          return Promise.all(methodPromises);
         });
       });
 
@@ -343,7 +428,7 @@ describe("/api", () => {
                 expect(msg).to.equal("Invalid request!");
               });
           });
-          it("POST: returns 422 Incomplete request! when passed the wrong or no username/body key", () => {
+          it("POST: returns 422 Unprocessable entity! when passed the wrong or no username/body key", () => {
             const comment = {
               hello: "butter_bridge",
               byebye: "I'll butter your bridge"
@@ -353,7 +438,7 @@ describe("/api", () => {
               .send(comment)
               .expect(422)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("Incomplete request!");
+                expect(msg).to.equal("Unprocessable entity!");
               });
           });
           it("POST: returns 406 Invalid request! when passed an invalid username/body value", () => {
@@ -458,6 +543,21 @@ describe("/api", () => {
               });
           });
         });
+
+        describe("INVALID METHODS", () => {
+          it("status:405", () => {
+            const invalidMethods = ["patch", "put", "delete"];
+            const methodPromises = invalidMethods.map(method => {
+              return request(app)
+                [method]("/api/articles/1/comments")
+                .expect(405)
+                .then(({ body: { msg } }) => {
+                  expect(msg).to.equal("method not allowed");
+                });
+            });
+            return Promise.all(methodPromises);
+          });
+        });
       });
     });
   });
@@ -502,14 +602,14 @@ describe("/api", () => {
               expect(msg).to.equal("Invalid request!");
             });
         });
-        it("PATCH: returns 422 Incomplete request! when passed a wrong or no inc_votes key", () => {
+        it("PATCH: returns 422 Unprocessable entity! when passed a wrong or no inc_votes key", () => {
           const votes = { hello: 1 };
           return request(app)
             .patch("/api/comments/2")
             .send(votes)
             .expect(422)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Incomplete request!");
+              expect(msg).to.equal("Unprocessable entity!");
             });
         });
         it("PATCH: returns 406 Invalid request! when passed an invalid inc_votes value", () => {
@@ -522,7 +622,18 @@ describe("/api", () => {
               expect(msg).to.equal("Invalid request!");
             });
         });
+        it("PATCH: returns 422 Unprocessable entity! when passed a body with an inc_votes key but other keys also", () => {
+          const votes = { inc_votes: 1, job: "errorHandler" };
+          return request(app)
+            .patch("/api/comments/2")
+            .send(votes)
+            .expect(422)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Unprocessable entity!");
+            });
+        });
       });
+
       describe("DELETE", () => {
         it("DELETE: returns 204 and no content when removing comment by comment_id", () => {
           return request(app)
@@ -547,6 +658,21 @@ describe("/api", () => {
             .then(({ body: { msg } }) => {
               expect(msg).to.eql("Invalid request!");
             });
+        });
+      });
+
+      describe.only("INVALID METHODS", () => {
+        it("status:405", () => {
+          const invalidMethods = ["get", "post", "put"];
+          const methodPromises = invalidMethods.map(method => {
+            return request(app)
+              [method]("/api/comments/2")
+              .expect(405)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("method not allowed");
+              });
+          });
+          return Promise.all(methodPromises);
         });
       });
     });

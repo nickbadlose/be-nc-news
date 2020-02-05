@@ -2,7 +2,7 @@ const connection = require("../db/connection");
 
 exports.updateCommentById = (comment_id, votes) => {
   if (votes === undefined) {
-    return Promise.reject({ status: 422, msg: "Incomplete request!" });
+    return Promise.reject({ status: 422, msg: "Unprocessable entity!" });
   }
   return connection("comments")
     .where({ comment_id })
