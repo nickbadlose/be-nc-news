@@ -12,11 +12,26 @@ describe("/api", () => {
   after(() => connection.destroy());
   beforeEach(() => connection.seed.run());
 
-  describe("/theEndPointThatWasnt", () => {
+  describe.only("/theEndPointThatWasnt", () => {
     it("GET: returns 404 Not found! when passed an endpoint that doesn't exist", () => {
       return request(app)
         .get("/api/#notanendpoint")
         .expect(404);
+    });
+  });
+
+  describe("INVALID METHODS", () => {
+    it("status:405", () => {
+      const invalidMethods = ["patch", "post", "put", "delete"];
+      const methodPromises = invalidMethods.map(method => {
+        return request(app)
+          [method]("/api/")
+          .expect(405)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("method not allowed");
+          });
+      });
+      return Promise.all(methodPromises);
     });
   });
 
@@ -88,8 +103,13 @@ describe("/api", () => {
             .get("/api/users/butter_bridge")
             .expect(200)
             .then(({ body }) => {
-              expect(body.username).to.equal("butter_bridge");
-              expect(body).to.contain.keys("username", "avatar_url", "name");
+              expect(body).to.contain.keys("user");
+              expect(body.user.username).to.equal("butter_bridge");
+              expect(body.user).to.contain.keys(
+                "username",
+                "avatar_url",
+                "name"
+              );
             });
         });
         it("GET: returns 404 Not found! when passed a username that doesn't exist", () => {
@@ -158,12 +178,12 @@ describe("/api", () => {
             expect(articles).to.be.sortedBy("article_id", { descending: true });
           });
       });
-      it("GET: returns 406 Invalid request when passed an invalid sort_by query", () => {
+      it("GET: returns 400 Bad request when passed an invalid sort_by query", () => {
         return request(app)
           .get("/api/articles?sort_by=cantSortThis!")
-          .expect(406)
+          .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Invalid request!");
+            expect(msg).to.equal("Bad request!");
           });
       });
       it("GET: returns the articles ordered by the passed order query", () => {
@@ -176,17 +196,17 @@ describe("/api", () => {
             });
           });
       });
-      it("GET: returns 406 Invalid request when passed an invalid order query", () => {
+      it("GET: returns 400 Bad request when passed an invalid order query", () => {
         return request(app)
           .get("/api/articles?order=cantOrderThis!")
-          .expect(406)
+          .expect(400)
           .then(({ body: { msg } }) => {
-            expect(msg).to.equal("Invalid request!");
+            expect(msg).to.equal("Bad request!");
           });
       });
-      it("GET: returns the articles filtered by the passed username query", () => {
+      it("GET: returns the articles filtered by the passed author query", () => {
         return request(app)
-          .get("/api/articles?username=butter_bridge")
+          .get("/api/articles?author=butter_bridge")
           .expect(200)
           .then(({ body: { articles } }) => {
             const output = articles.every(article => {
@@ -195,17 +215,17 @@ describe("/api", () => {
             expect(output).to.be.true;
           });
       });
-      it("GET: returns 404 Not found! when passed an username that doesn't exist", () => {
+      it("GET: returns 404 Not found! when passed an author that doesn't exist", () => {
         return request(app)
-          .get("/api/articles?username=notAUser")
+          .get("/api/articles?author=notAUser")
           .expect(404)
           .then(({ body: { msg } }) => {
             expect(msg).to.equal("Not found!");
           });
       });
-      it("GET: returns 200 and an object with an articles key containing an empty array when passed a valid username that has not wrote any articles", () => {
+      it("GET: returns 200 and an object with an articles key containing an empty array when passed a valid author that has not wrote any articles", () => {
         return request(app)
-          .get("/api/articles?username=lurker")
+          .get("/api/articles?author=lurker")
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles.length).to.equal(0);
@@ -262,8 +282,9 @@ describe("/api", () => {
             .get("/api/articles/1")
             .expect(200)
             .then(({ body }) => {
-              expect(body.article_id).to.equal(1);
-              expect(body).to.contain.keys(
+              expect(body).to.contain.keys("article");
+              expect(body.article.article_id).to.equal(1);
+              expect(body.article).to.contain.keys(
                 "article_id",
                 "title",
                 "body",
@@ -283,12 +304,12 @@ describe("/api", () => {
               expect(msg).to.equal("Not found!");
             });
         });
-        it("GET: returns 406 Invalid request! when passed an invalid article_id", () => {
+        it("GET: returns 400 Bad request! when passed an invalid article_id", () => {
           return request(app)
             .get("/api/articles/abc")
-            .expect(406)
+            .expect(400)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Invalid request!");
+              expect(msg).to.equal("Bad request!");
             });
         });
       });
@@ -296,21 +317,22 @@ describe("/api", () => {
       describe("PATCH", () => {
         it("PATCH: returns 202 and an object containing the updated article when passed an article_id", () => {
           const votes = { inc_votes: 1 };
-          const outputArticle = {
-            article_id: 1,
-            title: "Living in the shadow of a great man",
-            body: "I find this existence challenging",
-            votes: 101,
-            topic: "mitch",
-            author: "butter_bridge",
-            created_at: "2018-11-15T12:21:54.171Z"
-          };
           return request(app)
             .patch("/api/articles/1")
             .send(votes)
-            .expect(202)
+            .expect(200)
             .then(({ body }) => {
-              expect(body).to.eql(outputArticle);
+              expect(body).to.contain.keys("article");
+              expect(body.article.votes).to.equal(101);
+              expect(body.article).to.contain.keys(
+                "article_id",
+                "title",
+                "body",
+                "votes",
+                "author",
+                "created_at",
+                "topic"
+              );
             });
         });
         it("PATCH: returns 404 Not found! when passed an article_id that doesn't exist", () => {
@@ -323,44 +345,66 @@ describe("/api", () => {
               expect(msg).to.equal("Not found!");
             });
         });
-        it("PATCH: returns 406 Invalid request! when passed an invalid article_id", () => {
+        it("PATCH: returns 400 Bad request! when passed an invalid article_id", () => {
           const votes = { inc_votes: 1 };
           return request(app)
             .patch("/api/articles/abc")
             .send(votes)
-            .expect(406)
+            .expect(400)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Invalid request!");
+              expect(msg).to.equal("Bad request!");
             });
         });
-        it("PATCH: returns 422 Unprocessable entity! when passed a wrong or no inc_votes key", () => {
+        it("PATCH: returns 200 and an unedited article when passed a wrong or no inc_votes key", () => {
           const votes = { hello: 1 };
           return request(app)
             .patch("/api/articles/1")
             .send(votes)
-            .expect(422)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Unprocessable entity!");
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("article");
+              expect(body.article.article_id).to.equal(1);
+              expect(body.article.votes).to.equal(100);
+              expect(body.article).to.contain.keys(
+                "article_id",
+                "title",
+                "body",
+                "votes",
+                "author",
+                "created_at",
+                "topic"
+              );
             });
         });
-        it("PATCH: returns 406 Invalid request! when passed an invalid inc_votes value", () => {
+        it("PATCH: returns 400 Bad request! when passed an invalid inc_votes value", () => {
           const votes = { inc_votes: ["abc"] };
           return request(app)
             .patch("/api/articles/1")
             .send(votes)
-            .expect(406)
+            .expect(400)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Invalid request!");
+              expect(msg).to.equal("Bad request!");
             });
         });
-        it("PATCH: returns 422 Unprocessable entity! when passed a body with an inc_votes key but other keys also", () => {
+        it("PATCH: returns 200 and the updated article when passed a body with an inc_votes key but other keys also", () => {
           const votes = { inc_votes: 1, job: "errorHandler" };
           return request(app)
             .patch("/api/articles/1")
             .send(votes)
-            .expect(422)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Unprocessable entity!");
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("article");
+              expect(body.article.article_id).to.equal(1);
+              expect(body.article.votes).to.equal(101);
+              expect(body.article).to.contain.keys(
+                "article_id",
+                "title",
+                "body",
+                "votes",
+                "author",
+                "created_at",
+                "topic"
+              );
             });
         });
       });
@@ -392,7 +436,8 @@ describe("/api", () => {
               .send(comment)
               .expect(201)
               .then(({ body }) => {
-                expect(body).to.contain.keys(
+                expect(body).to.contain.keys("comment");
+                expect(body.comment).to.contain.keys(
                   "comment_id",
                   "author",
                   "article_id",
@@ -415,7 +460,7 @@ describe("/api", () => {
                 expect(msg).to.equal("Not found!");
               });
           });
-          it("POST: returns 406 Invalid request! when passed an invalid article_id", () => {
+          it("POST: returns 400 Bad request! when passed an invalid article_id", () => {
             const comment = {
               username: "butter_bridge",
               body: "I'll butter your bridge"
@@ -423,12 +468,12 @@ describe("/api", () => {
             return request(app)
               .post("/api/articles/abc/comments")
               .send(comment)
-              .expect(406)
+              .expect(400)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("Invalid request!");
+                expect(msg).to.equal("Bad request!");
               });
           });
-          it("POST: returns 422 Unprocessable entity! when passed the wrong or no username/body key", () => {
+          it("POST: returns 400 Bad request! when passed the wrong or no username/body key", () => {
             const comment = {
               hello: "butter_bridge",
               byebye: "I'll butter your bridge"
@@ -436,12 +481,12 @@ describe("/api", () => {
             return request(app)
               .post("/api/articles/1/comments")
               .send(comment)
-              .expect(422)
+              .expect(400)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("Unprocessable entity!");
+                expect(msg).to.equal("Bad request!");
               });
           });
-          it("POST: returns 406 Invalid request! when passed an invalid username/body value", () => {
+          it("POST: returns 404 Not found! when passed an invalid username/body value", () => {
             const comment = {
               username: 111,
               body: ["I'll butter your bridge"]
@@ -449,9 +494,12 @@ describe("/api", () => {
             return request(app)
               .post("/api/articles/1/comments")
               .send(comment)
-              .expect(406)
+              .expect(404)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("Invalid request!");
+                console.log(
+                  "***** maybe should be 400 bad request! but might change other tests, 23503 foreign key violation *******"
+                );
+                expect(msg).to.equal("Not found!");
               });
           });
         });
@@ -490,21 +538,21 @@ describe("/api", () => {
                 expect(msg).to.equal("Not found!");
               });
           });
-          it("GET: returns 406 Invalid request! when passed an invalid article_id", () => {
+          it("GET: returns 400 Bad request! when passed an invalid article_id", () => {
             return request(app)
               .get("/api/articles/abc/comments")
-              .expect(406)
+              .expect(400)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("Invalid request!");
+                expect(msg).to.equal("Bad request!");
               });
           });
-          it("GET: returns the comments sorted by created_at by default and ordered by ascending by default", () => {
+          it("GET: returns the comments sorted by created_at by default and ordered by descending by default", () => {
             return request(app)
               .get("/api/articles/1/comments")
               .expect(200)
               .then(({ body }) => {
                 expect(body.comments).to.be.sortedBy("created_at", {
-                  descending: false
+                  descending: true
                 });
               });
           });
@@ -513,33 +561,35 @@ describe("/api", () => {
               .get("/api/articles/1/comments?sort_by=votes")
               .expect(200)
               .then(({ body }) => {
-                expect(body.comments).to.be.sortedBy("votes");
-              });
-          });
-          it("GET: returns the comments ordered by the passed order query", () => {
-            return request(app)
-              .get("/api/articles/1/comments?order=desc")
-              .expect(200)
-              .then(({ body }) => {
-                expect(body.comments).to.be.sortedBy("created_at", {
+                expect(body.comments).to.be.sortedBy("votes", {
                   descending: true
                 });
               });
           });
-          it("GET: returns 406 Invalid request! when passed a sort_by query that doesn't exist", () => {
+          it("GET: returns the comments ordered by the passed order query", () => {
             return request(app)
-              .get("/api/articles/1/comments?sort_by=theUnSortAbleMan")
-              .expect(406)
-              .then(({ body: { msg } }) => {
-                expect(msg).to.equal("Invalid request!");
+              .get("/api/articles/1/comments?order=asc")
+              .expect(200)
+              .then(({ body }) => {
+                expect(body.comments).to.be.sortedBy("created_at", {
+                  descending: false
+                });
               });
           });
-          it("GET: returns 406 Invalid request! when passed an invalid order query", () => {
+          it("GET: returns 400 Bad request! when passed a sort_by query that doesn't exist", () => {
+            return request(app)
+              .get("/api/articles/1/comments?sort_by=theUnSortAbleMan")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Bad request!");
+              });
+          });
+          it("GET: returns 400 Bad request! when passed an invalid order query", () => {
             return request(app)
               .get("/api/articles/1/comments?order=theUnOrderAbleMan")
-              .expect(406)
+              .expect(400)
               .then(({ body: { msg } }) => {
-                expect(msg).to.equal("Invalid request!");
+                expect(msg).to.equal("Bad request!");
               });
           });
         });
@@ -565,16 +615,17 @@ describe("/api", () => {
   describe("/comments", () => {
     describe("/:comment_id", () => {
       describe("PATCH", () => {
-        it("PATCH: returns 202 and an object containing the updated comment when passed a comment_id", () => {
-          const votes = { inc_votes: 1 };
+        it("PATCH: returns 200 and an object containing the updated comment when passed a comment_id", () => {
+          const votes = { inc_votes: 3 };
           return request(app)
             .patch("/api/comments/2")
             .send(votes)
-            .expect(202)
+            .expect(200)
             .then(({ body }) => {
-              expect(body.votes).to.equal(15);
-              expect(body.comment_id).to.equal(2);
-              expect(body).to.contain.keys(
+              expect(body).to.contain.keys("comment");
+              expect(body.comment.votes).to.equal(17);
+              expect(body.comment.comment_id).to.equal(2);
+              expect(body.comment).to.contain.keys(
                 "author",
                 "article_id",
                 "created_at",
@@ -592,44 +643,53 @@ describe("/api", () => {
               expect(msg).to.equal("Not found!");
             });
         });
-        it("PATCH: returns 406 Invalid request! when passed an invalid comment_id", () => {
+        it("PATCH: returns 400 Bad request! when passed an invalid comment_id", () => {
           const votes = { inc_votes: 1 };
           return request(app)
             .patch("/api/comments/abc")
             .send(votes)
-            .expect(406)
+            .expect(400)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Invalid request!");
+              expect(msg).to.equal("Bad request!");
             });
         });
-        it("PATCH: returns 422 Unprocessable entity! when passed a wrong or no inc_votes key", () => {
+        it("PATCH: returns 200 and an unedited comment when no inc_votes key passed", () => {
           const votes = { hello: 1 };
           return request(app)
             .patch("/api/comments/2")
             .send(votes)
-            .expect(422)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Unprocessable entity!");
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("comment");
+              expect(body.comment.votes).to.equal(14);
             });
         });
-        it("PATCH: returns 406 Invalid request! when passed an invalid inc_votes value", () => {
+        it("PATCH: returns 400 Bad request! when passed an invalid inc_votes value", () => {
           const votes = { inc_votes: ["abc"] };
           return request(app)
             .patch("/api/comments/2")
             .send(votes)
-            .expect(406)
+            .expect(400)
             .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Invalid request!");
+              expect(msg).to.equal("Bad request!");
             });
         });
-        it("PATCH: returns 422 Unprocessable entity! when passed a body with an inc_votes key but other keys also", () => {
+        it("PATCH: returns 200 and the updated comment when passed a body with an inc_votes key but other keys also", () => {
           const votes = { inc_votes: 1, job: "errorHandler" };
           return request(app)
             .patch("/api/comments/2")
             .send(votes)
-            .expect(422)
-            .then(({ body: { msg } }) => {
-              expect(msg).to.equal("Unprocessable entity!");
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("comment");
+              expect(body.comment.votes).to.equal(15);
+              expect(body.comment.comment_id).to.equal(2);
+              expect(body.comment).to.contain.keys(
+                "author",
+                "article_id",
+                "created_at",
+                "body"
+              );
             });
         });
       });
@@ -651,17 +711,17 @@ describe("/api", () => {
               expect(msg).to.eql("Not found!");
             });
         });
-        it("DELETE: returns 406 Invalid request! when passed an invalid comment_id", () => {
+        it("DELETE: returns 400 Bad request! when passed an invalid comment_id", () => {
           return request(app)
             .delete("/api/comments/abc")
-            .expect(406)
+            .expect(400)
             .then(({ body: { msg } }) => {
-              expect(msg).to.eql("Invalid request!");
+              expect(msg).to.eql("Bad request!");
             });
         });
       });
 
-      describe.only("INVALID METHODS", () => {
+      describe("INVALID METHODS", () => {
         it("status:405", () => {
           const invalidMethods = ["get", "post", "put"];
           const methodPromises = invalidMethods.map(method => {

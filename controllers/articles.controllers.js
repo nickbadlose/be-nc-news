@@ -10,7 +10,7 @@ exports.getArticleById = (req, res, next) => {
   const { article_id } = req.params;
   fetchArticleById(article_id)
     .then(([article]) => {
-      res.status(200).send(article);
+      res.status(200).send({ article });
     })
     .catch(err => {
       next(err);
@@ -18,14 +18,11 @@ exports.getArticleById = (req, res, next) => {
 };
 
 exports.updateArticleById = (req, res, next) => {
-  if (Object.keys(req.body).length > 1) {
-    next({ status: 422, msg: "Unprocessable entity!" });
-  }
   const { article_id } = req.params;
   const { inc_votes } = req.body;
   editArticleById(article_id, inc_votes)
     .then(([article]) => {
-      res.status(202).send(article);
+      res.status(200).send({ article });
     })
     .catch(err => {
       next(err);
@@ -37,7 +34,7 @@ exports.postCommentByArticleId = (req, res, next) => {
   const { username, body } = req.body;
   addCommentByArticleId(article_id, username, body)
     .then(([comment]) => {
-      res.status(201).send(comment);
+      res.status(201).send({ comment });
     })
     .catch(err => {
       next(err);

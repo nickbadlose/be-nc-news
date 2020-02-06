@@ -17,10 +17,7 @@ exports.fetchArticleById = article_id => {
     });
 };
 
-exports.editArticleById = (article_id, votes) => {
-  if (votes === undefined) {
-    return Promise.reject({ status: 422, msg: "Unprocessable entity!" });
-  }
+exports.editArticleById = (article_id, votes = 0) => {
   return connection("articles")
     .where({ article_id })
     .increment({ votes })
@@ -34,12 +31,6 @@ exports.editArticleById = (article_id, votes) => {
 };
 
 exports.addCommentByArticleId = (article_id, author, body) => {
-  if (author === undefined || body === undefined) {
-    return Promise.reject({ status: 422, msg: "Unprocessable entity!" });
-  }
-  if (typeof body !== "string" || typeof author !== "string") {
-    return Promise.reject({ status: 406, msg: "Invalid request!" });
-  }
   return connection("comments")
     .insert({ article_id, author, body })
     .returning("*")
@@ -50,9 +41,9 @@ exports.addCommentByArticleId = (article_id, author, body) => {
 
 exports.fetchCommentsByArticleId = (article_id, { sort_by, order }) => {
   if (sort_by === undefined) sort_by = "created_at";
-  if (order === undefined) order = "asc";
+  if (order === undefined) order = "desc";
   if (order !== "asc" && order !== "desc") {
-    return Promise.reject({ status: 406, msg: "Invalid request!" });
+    return Promise.reject({ status: 400, msg: "Bad request!" });
   }
   const promises = [
     connection("comments")
@@ -75,12 +66,13 @@ exports.fetchCommentsByArticleId = (article_id, { sort_by, order }) => {
   });
 };
 
-exports.fetchArticles = ({ sort_by, order, username, topic }) => {
+exports.fetchArticles = ({ sort_by, order, author, topic }) => {
   if (sort_by === undefined) sort_by = "created_at";
   if (order === undefined) order = "desc";
   if (order !== "asc" && order !== "desc") {
-    return Promise.reject({ status: 406, msg: "Invalid request!" });
+    return Promise.reject({ status: 400, msg: "Bad request!" });
   }
+  const username = author;
   const promises = [
     connection("articles")
       .select("articles.*")
