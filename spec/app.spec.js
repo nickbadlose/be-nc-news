@@ -5,6 +5,7 @@ const { expect } = chai;
 const connection = require("../db/connection");
 const app = require("../app");
 const samsChaiSorted = require("sams-chai-sorted");
+const endpoints = require("../endpoints.json");
 
 chai.use(samsChaiSorted);
 
@@ -12,10 +13,22 @@ describe("/api", () => {
   after(() => connection.destroy());
   beforeEach(() => connection.seed.run());
 
+  describe("GET", () => {
+    it("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
+      return request(app)
+        .get("/api/")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.contain.keys("endpoints");
+          expect(body.endpoints).to.eql(endpoints);
+        });
+    });
+  });
+
   describe.only("/theEndPointThatWasnt", () => {
     it("GET: returns 404 Not found! when passed an endpoint that doesn't exist", () => {
       return request(app)
-        .get("/api/#notanendpoint")
+        .get("/api/notanendpoint")
         .expect(404);
     });
   });
