@@ -25,7 +25,7 @@ describe("/api", () => {
     });
   });
 
-  describe.only("/theEndPointThatWasnt", () => {
+  describe("/theEndPointThatWasnt", () => {
     it("GET: returns 404 Not found! when passed an endpoint that doesn't exist", () => {
       return request(app)
         .get("/api/notanendpoint")
@@ -499,7 +499,7 @@ describe("/api", () => {
                 expect(msg).to.equal("Bad request!");
               });
           });
-          it("POST: returns 404 Not found! when passed an invalid username/body value", () => {
+          it("POST: returns 400 Bad request! when passed an invalid body value", () => {
             const comment = {
               username: 111,
               body: ["I'll butter your bridge"]
@@ -507,12 +507,9 @@ describe("/api", () => {
             return request(app)
               .post("/api/articles/1/comments")
               .send(comment)
-              .expect(404)
+              .expect(400)
               .then(({ body: { msg } }) => {
-                console.log(
-                  "***** maybe should be 400 bad request! but might change other tests, 23503 foreign key violation *******"
-                );
-                expect(msg).to.equal("Not found!");
+                expect(msg).to.equal("Bad request!");
               });
           });
         });

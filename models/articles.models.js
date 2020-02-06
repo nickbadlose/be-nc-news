@@ -31,6 +31,9 @@ exports.editArticleById = (article_id, votes = 0) => {
 };
 
 exports.addCommentByArticleId = (article_id, author, body) => {
+  if (typeof body !== "string") {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
   return connection("comments")
     .insert({ article_id, author, body })
     .returning("*")
