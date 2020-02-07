@@ -42,9 +42,11 @@ exports.addCommentByArticleId = (article_id, author, body) => {
     });
 };
 
-exports.fetchCommentsByArticleId = (article_id, { sort_by, order }) => {
-  if (sort_by === undefined) sort_by = "created_at";
-  if (order === undefined) order = "desc";
+exports.fetchCommentsByArticleId = (
+  article_id,
+  sort_by = "created_at",
+  order = "desc"
+) => {
   if (order !== "asc" && order !== "desc") {
     return Promise.reject({ status: 400, msg: "Bad request!" });
   }
@@ -52,26 +54,27 @@ exports.fetchCommentsByArticleId = (article_id, { sort_by, order }) => {
     connection("comments")
       .where({ article_id })
       .orderBy(sort_by, order),
-    connection("articles").where({ article_id })
+    checkIfArticleExists(article_id)
   ];
-  return Promise.all(promises).then(([commentsArr, articleArr]) => {
-    const formattedComments = commentsArr.map(comment => {
-      delete comment.article_id;
-      return comment;
-    });
 
-    if (!commentsArr.length) {
-      if (!articleArr.length) {
-        return Promise.reject({ status: 404, msg: "Not found!" });
-      } else return formattedComments;
+  return Promise.all(promises).then(([commentsArr, articlePredicate]) => {
+    if (!articlePredicate) {
+      return Promise.reject({ status: 404, msg: "Not found!" });
+    } else {
+      return commentsArr.map(comment => {
+        delete comment.article_id;
+        return comment;
+      });
     }
-    return formattedComments;
   });
 };
 
-exports.fetchArticles = ({ sort_by, order, author, topic }) => {
-  if (sort_by === undefined) sort_by = "created_at";
-  if (order === undefined) order = "desc";
+exports.fetchArticles = (
+  sort_by = "created_at",
+  order = "desc",
+  author,
+  topic
+) => {
   if (order !== "asc" && order !== "desc") {
     return Promise.reject({ status: 400, msg: "Bad request!" });
   }
@@ -120,9 +123,20 @@ const checkIfTopicExists = topic => {
     return connection("topics")
       .select("*")
       .where("slug", topic)
-      .then(userArr => {
-        if (!userArr.length) return false;
+      .then(topicArr => {
+        if (!topicArr.length) return false;
         else return true;
       });
   }
+};
+
+const checkIfArticleExists = article_id => {
+  if (article_id === undefined) return true;
+  return connection("articles")
+    .select("*")
+    .where({ article_id })
+    .then(articleArr => {
+      if (!articleArr.length) return false;
+      else return true;
+    });
 };
