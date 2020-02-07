@@ -271,6 +271,48 @@ describe("/api", () => {
             expect(articles.length).to.equal(0);
           });
       });
+      it("GET: returns 200 and an object with an articles key containing an array of 10 articles at max by default", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles.length).to.equal(10);
+          });
+      });
+      it("GET: returns 200 and an object with an articles key containing an array of articles of the passed limit query", () => {
+        return request(app)
+          .get("/api/articles?limit=5")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles.length).to.equal(5);
+          });
+      });
+      it("GET: returns 200 and an object with an articles key containing an array of 10 articles on the first page by default", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles.length).to.equal(10);
+            expect(articles[9].article_id).to.equal(10);
+          });
+      });
+      it("GET: returns 200 and an object with an articles key containing an array of articles on the passed page query", () => {
+        return request(app)
+          .get("/api/articles?p=2")
+          .expect(200)
+          .then(({ body: { articles } }) => {
+            expect(articles.length).to.equal(2);
+            expect(articles[1].article_id).to.equal(12);
+          });
+      });
+      it("GET: returns 200 and an object with an articles key as well as a total_count key of all the articles regardless of pagnation", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.total_count).to.equal("12");
+          });
+      });
     });
 
     describe("INVALID METHODS", () => {

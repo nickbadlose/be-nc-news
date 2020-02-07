@@ -52,6 +52,7 @@ exports.fetchCommentsByArticleId = (
   }
   const promises = [
     connection("comments")
+      .select("comment_id", "votes", "created_at", "author", "body")
       .where({ article_id })
       .orderBy(sort_by, order),
     checkIfArticleExists(article_id)
@@ -61,10 +62,7 @@ exports.fetchCommentsByArticleId = (
     if (!articlePredicate) {
       return Promise.reject({ status: 404, msg: "Not found!" });
     } else {
-      return commentsArr.map(comment => {
-        delete comment.article_id;
-        return comment;
-      });
+      return commentsArr;
     }
   });
 };
@@ -73,7 +71,9 @@ exports.fetchArticles = (
   sort_by = "created_at",
   order = "desc",
   author,
-  topic
+  topic,
+  limit = 10,
+  p = 1
 ) => {
   if (order !== "asc" && order !== "desc") {
     return Promise.reject({ status: 400, msg: "Bad request!" });
@@ -81,7 +81,15 @@ exports.fetchArticles = (
   const username = author;
   const promises = [
     connection("articles")
-      .select("articles.*")
+      .count({ total_count: "articles.article_id" })
+      .select(
+        "articles.author",
+        "articles.title",
+        "articles.article_id",
+        "articles.topic",
+        "articles.created_at",
+        "articles.votes"
+      )
       .leftJoin("comments", "articles.article_id", "comments.article_id")
       .count({ comment_count: "comment_id" })
       .groupBy("articles.article_id")
@@ -89,17 +97,25 @@ exports.fetchArticles = (
       .modify(query => {
         if (username) query.where("articles.author", username);
         if (topic) query.where("articles.topic", topic);
-      }),
+      })
+      .count({ total_count: "articles.article_id" })
+      .limit(limit)
+      .offset((p - 1) * 10),
     checkIfUserExists(username),
-    checkIfTopicExists(topic)
+    checkIfTopicExists(topic),
+    getArticleCount(username, topic)
   ];
 
   return Promise.all(promises).then(
-    ([articlesArr, userPredicate, topicPredicate]) => {
+    ([articlesArr, userPredicate, topicPredicate, total_count]) => {
       if (!userPredicate || !topicPredicate) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
-      return articlesArr;
+      const articles = {
+        articles: articlesArr,
+        total_count: total_count
+      };
+      return articles;
     }
   );
 };
@@ -138,5 +154,17 @@ const checkIfArticleExists = article_id => {
     .then(articleArr => {
       if (!articleArr.length) return false;
       else return true;
+    });
+};
+
+const getArticleCount = (username, topic) => {
+  return connection("articles")
+    .modify(query => {
+      if (username) query.where("articles.author", username);
+      if (topic) query.where("articles.topic", topic);
+    })
+    .count({ total_count: "article_id" })
+    .then(([{ total_count }]) => {
+      return total_count;
     });
 };
