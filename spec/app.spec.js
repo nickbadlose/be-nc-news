@@ -248,9 +248,85 @@ describe("/api", () => {
         });
       });
 
+      describe("PATCH", () => {
+        it("PATCH: returns 200 and an object containing the updated user keyed by user", () => {
+          const updatedUser = {
+            avatar_url: "new avatar url",
+            name: "new name"
+          };
+          return request(app)
+            .patch("/api/users/butter_bridge")
+            .send(updatedUser)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("user");
+              expect(body.user).to.contain.keys("username");
+              expect(body.user.avatar_url).to.equal("new avatar url");
+              expect(body.user.name).to.equal("new name");
+            });
+        });
+        it("PATCH: returns 200 and an object containing the updated user keyed by user when only passed one key to update", () => {
+          const updatedUser = {
+            avatar_url: "new avatar url"
+          };
+          return request(app)
+            .patch("/api/users/butter_bridge")
+            .send(updatedUser)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("user");
+              expect(body.user).to.contain.keys("username");
+              expect(body.user.avatar_url).to.equal("new avatar url");
+              expect(body.user.name).to.equal("jonny");
+            });
+        });
+        it("PATCH: returns 200 and an object containing the unedited article when passed an empty body or a body with no avatar or name keys", () => {
+          const updatedUser = {};
+          return request(app)
+            .patch("/api/users/butter_bridge")
+            .send(updatedUser)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("user");
+              expect(body.user).to.contain.keys(
+                "username",
+                "avatar_url",
+                "name"
+              );
+              expect(body.user.name).to.equal("jonny");
+            });
+        });
+        it("PATCH: returns 404 Not found! when passed a username that doesn't exist", () => {
+          const updatedUser = {
+            avatar_url: "new avatar url",
+            name: "new name"
+          };
+          return request(app)
+            .patch("/api/users/not-a-user")
+            .send(updatedUser)
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Not found!");
+            });
+        });
+        it("PATCH: returns 400 Bad request! when passed a invalid avatar or name value", () => {
+          const updatedUser = {
+            avatar_url: ["new avatar url"],
+            name: ["new name"]
+          };
+          return request(app)
+            .patch("/api/users/butter_bridge")
+            .send(updatedUser)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Bad request!");
+            });
+        });
+      });
+
       describe("INVALID METHODS", () => {
         it("status:405", () => {
-          const invalidMethods = ["patch", "post", "put", "delete"];
+          const invalidMethods = ["post", "put", "delete"];
           const methodPromises = invalidMethods.map(method => {
             return request(app)
               [method]("/api/users/butter_bridge")
@@ -656,7 +732,7 @@ describe("/api", () => {
               );
             });
         });
-        it("PATCH: returns 200 and an object containing the updated article when passed an article_id", () => {
+        it("PATCH: returns 200 and an object containing the updated article when passed an article_id and body", () => {
           const updatedArticle = {
             body: "updated article body"
           };

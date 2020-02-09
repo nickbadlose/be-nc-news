@@ -1,7 +1,8 @@
 const {
   fetchUsers,
   fetchUserById,
-  addUser
+  addUser,
+  updateUserById
 } = require("../models/users.models");
 
 exports.getUsers = (req, res, next) => {
@@ -30,6 +31,18 @@ exports.postUser = (req, res, next) => {
   addUser(username, avatar_url, name)
     .then(user => {
       res.status(201).send({ user });
+    })
+    .catch(err => {
+      next(err);
+    });
+};
+
+exports.patchUserById = (req, res, next) => {
+  const { username } = req.params;
+  const { avatar_url, name } = req.body;
+  updateUserById(username, avatar_url, name)
+    .then(([user]) => {
+      res.status(200).send({ user });
     })
     .catch(err => {
       next(err);

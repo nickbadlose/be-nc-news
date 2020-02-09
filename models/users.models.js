@@ -35,3 +35,32 @@ exports.addUser = (username, avatar_url, name) => {
       return user;
     });
 };
+
+exports.updateUserById = (username, avatar_url, name) => {
+  if (typeof avatar_url !== "string" && avatar_url) {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
+  if (typeof name !== "string" && name) {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
+  return connection("users")
+    .where({ username })
+    .modify(query => {
+      if (avatar_url !== undefined && name !== undefined) {
+        query.update({ avatar_url, name });
+      }
+      if (avatar_url !== undefined && name === undefined) {
+        query.update({ avatar_url });
+      }
+      if (name !== undefined && avatar_url === undefined) {
+        query.update({ name });
+      }
+    })
+    .returning("*")
+    .then(userArr => {
+      if (!userArr.length) {
+        return Promise.reject({ status: 404, msg: "Not found!" });
+      }
+      return userArr;
+    });
+};
