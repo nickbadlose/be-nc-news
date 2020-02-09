@@ -287,13 +287,12 @@ describe("/api", () => {
             expect(articles.length).to.equal(5);
           });
       });
-      it("GET: returns 200 and an object with an articles key containing an array of 10 articles on the first page by default", () => {
+      it("GET: returns 400 Bad request! when passed an invalid limit query", () => {
         return request(app)
-          .get("/api/articles")
-          .expect(200)
-          .then(({ body: { articles } }) => {
-            expect(articles.length).to.equal(10);
-            expect(articles[9].article_id).to.equal(10);
+          .get("/api/articles?p=not-a-valid-limit-query")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
           });
       });
       it("GET: returns 200 and an object with an articles key containing an array of articles on the passed page query", () => {
@@ -302,7 +301,14 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles.length).to.equal(2);
-            expect(articles[1].article_id).to.equal(12);
+          });
+      });
+      it("GET: returns 400 Bad request! when passed an invalid page query", () => {
+        return request(app)
+          .get("/api/articles?p=not-a-valid-p-query")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
           });
       });
       it("GET: returns 200 and an object with an articles key as well as a total_count key of all the articles regardless of pagnation", () => {
@@ -313,11 +319,86 @@ describe("/api", () => {
             expect(body.total_count).to.equal("12");
           });
       });
+      it("GET: returns the articles with the total count filtered by the topic/author query", () => {
+        return request(app)
+          .get("/api/articles?topic=mitch")
+          .expect(200)
+          .then(({ body }) => {
+            expect(body.total_count).to.equal("11");
+          });
+      });
+    });
+
+    describe("POST", () => {
+      it("POST: returns 201 and the updated article", () => {
+        const newArticle = {
+          title: "New article",
+          body: "This is a new article",
+          topic: "mitch",
+          author: "butter_bridge"
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body).to.contain.keys("article");
+            expect(body.article).to.contain.keys(
+              "author",
+              "title",
+              "article_id",
+              "topic",
+              "created_at",
+              "votes",
+              "comment_count"
+            );
+          });
+      });
+      it("POST: returns 404 Not found! when passed a username or topic that doesn't exist", () => {
+        const newArticle = {
+          title: "New article",
+          body: "This is a new article",
+          topic: "not a topic",
+          author: "not a user"
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Not found!");
+          });
+      });
+      it("POST: returns 400 Bad request! when not passed one of the 4 required keys", () => {
+        const newArticle = {};
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
+      it("POST: returns 400 Bad request! when passed an invalid body or title input", () => {
+        const newArticle = {
+          title: ["New article"],
+          body: ["This is a new article"],
+          topic: "mitch",
+          author: "butter_bridge"
+        };
+        return request(app)
+          .post("/api/articles")
+          .send(newArticle)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
     });
 
     describe("INVALID METHODS", () => {
       it("status:405", () => {
-        const invalidMethods = ["patch", "post", "put", "delete"];
+        const invalidMethods = ["patch", "put", "delete"];
         const methodPromises = invalidMethods.map(method => {
           return request(app)
             [method]("/api/articles")
@@ -464,9 +545,47 @@ describe("/api", () => {
         });
       });
 
+      describe("DELETE", () => {
+        it("DELETE returns 204 and no content whilst deleting the article and any comments posted to the article", () => {
+          return request(app)
+            .delete("/api/articles/1")
+            .expect(204)
+            .then(({ body }) => {
+              expect(body).to.eql({});
+              const votes = { inc_votes: 1 };
+              const promises = [
+                request(app)
+                  .get("/api/articles/1")
+                  .expect(404),
+                request(app)
+                  .patch("/api/comments/2")
+                  .send(votes)
+                  .expect(404) // utilising the error setup on our patch comments route if passed a comment  id that doesn't exist
+              ];
+              return Promise.all(promises);
+            });
+        });
+        it("DELETE returns 404 Not found! when passed an article id that doesn't exist", () => {
+          return request(app)
+            .delete("/api/articles/100")
+            .expect(404)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Not found!");
+            });
+        });
+        it("DELETE returns 400 Bad request! when passed an article id that doesn't exist", () => {
+          return request(app)
+            .delete("/api/articles/abc")
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Bad request!");
+            });
+        });
+      });
+
       describe("INVALID METHODS", () => {
         it("status:405", () => {
-          const invalidMethods = ["post", "put", "delete"];
+          const invalidMethods = ["post", "put"];
           const methodPromises = invalidMethods.map(method => {
             return request(app)
               [method]("/api/articles/1")
@@ -639,6 +758,46 @@ describe("/api", () => {
           it("GET: returns 400 Bad request! when passed an invalid order query", () => {
             return request(app)
               .get("/api/articles/1/comments?order=theUnOrderAbleMan")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Bad request!");
+              });
+          });
+          it("GET: returns 200 and the comments to the given article limited to 10 by default", () => {
+            return request(app)
+              .get("/api/articles/1/comments")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments.length).to.equal(10);
+              });
+          });
+          it("GET: returns 200 and the comments to the given article limited to the passed limit query", () => {
+            return request(app)
+              .get("/api/articles/1/comments?limit=5")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments.length).to.equal(5);
+              });
+          });
+          it("GET: returns 400 Bad request! when passed an invalid limit query", () => {
+            return request(app)
+              .get("/api/articles/1/comments?limit=not-a-valid-limit-query")
+              .expect(400)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("Bad request!");
+              });
+          });
+          it("GET: returns 200 and the comments to the given article on the page of the passed page query", () => {
+            return request(app)
+              .get("/api/articles/1/comments?p=2")
+              .expect(200)
+              .then(({ body: { comments } }) => {
+                expect(comments.length).to.equal(3);
+              });
+          });
+          it("GET: returns 400 Bad request! when passed an invalid page query", () => {
+            return request(app)
+              .get("/api/articles/1/comments?p=not-a-valid-p-query")
               .expect(400)
               .then(({ body: { msg } }) => {
                 expect(msg).to.equal("Bad request!");

@@ -45,16 +45,23 @@ exports.addCommentByArticleId = (article_id, author, body) => {
 exports.fetchCommentsByArticleId = (
   article_id,
   sort_by = "created_at",
-  order = "desc"
+  order = "desc",
+  limit = 10,
+  p = 1
 ) => {
   if (order !== "asc" && order !== "desc") {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
+  if (isNaN(limit) || isNaN(p)) {
     return Promise.reject({ status: 400, msg: "Bad request!" });
   }
   const promises = [
     connection("comments")
       .select("comment_id", "votes", "created_at", "author", "body")
       .where({ article_id })
-      .orderBy(sort_by, order),
+      .orderBy(sort_by, order)
+      .limit(limit)
+      .offset((p - 1) * 10),
     checkIfArticleExists(article_id)
   ];
 
@@ -76,6 +83,9 @@ exports.fetchArticles = (
   p = 1
 ) => {
   if (order !== "asc" && order !== "desc") {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
+  if (isNaN(limit) || isNaN(p)) {
     return Promise.reject({ status: 400, msg: "Bad request!" });
   }
   const username = author;
@@ -118,6 +128,31 @@ exports.fetchArticles = (
       return articles;
     }
   );
+};
+
+exports.addArticle = (title, body, topic, author) => {
+  if (typeof body !== "string" || typeof title !== "string") {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
+  return connection("articles")
+    .insert({ title, body, topic, author })
+    .returning("*")
+    .then(([article]) => {
+      article.comment_count = 0;
+      return article;
+    });
+};
+
+exports.removeArticleById = article_id => {
+  return connection("articles")
+    .where({ article_id })
+    .del()
+    .then(deletedRows => {
+      if (deletedRows === 0) {
+        return Promise.reject({ status: 404, msg: "Not found!" });
+      }
+      return;
+    });
 };
 
 const checkIfUserExists = username => {
