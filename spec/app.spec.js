@@ -1074,6 +1074,55 @@ describe("/api", () => {
               );
             });
         });
+        it("PATCH: returns 200 and an object containing the updated comment when passed a comment_id", () => {
+          const newComment = { body: "new comment body" };
+          return request(app)
+            .patch("/api/comments/2")
+            .send(newComment)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("comment");
+              expect(body.comment.body).to.equal("new comment body");
+              expect(body.comment.comment_id).to.equal(2);
+              expect(body.comment).to.contain.keys(
+                "author",
+                "article_id",
+                "created_at",
+                "body",
+                "votes"
+              );
+            });
+        });
+        it("PATCH: returns 200 and an object containing the updated comment when passed a comment_id as well as both an inc_votes key and body key", () => {
+          const newComment = { body: "new comment body", inc_votes: 2 };
+          return request(app)
+            .patch("/api/comments/2")
+            .send(newComment)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("comment");
+              expect(body.comment.body).to.equal("new comment body");
+              expect(body.comment.votes).to.equal(16);
+              expect(body.comment.comment_id).to.equal(2);
+              expect(body.comment).to.contain.keys(
+                "author",
+                "article_id",
+                "created_at",
+                "body",
+                "votes"
+              );
+            });
+        });
+        it("PATCH: returns 400 Bad request! when passed an invalid body value", () => {
+          const newComment = { body: ["abc"] };
+          return request(app)
+            .patch("/api/comments/2")
+            .send(newComment)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Bad request!");
+            });
+        });
       });
 
       describe("DELETE", () => {

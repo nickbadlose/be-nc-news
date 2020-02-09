@@ -1,9 +1,19 @@
 const connection = require("../db/connection");
 
-exports.updateCommentById = (comment_id, votes = 0) => {
+exports.updateCommentById = (comment_id, votes, body) => {
+  if (typeof body !== "string" && body) {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
   return connection("comments")
     .where({ comment_id })
-    .increment({ votes })
+    .modify(query => {
+      if (body) {
+        query.update({ body });
+      }
+      if (votes) {
+        query.increment({ votes });
+      }
+    })
     .returning("*")
     .then(commentArr => {
       if (!commentArr.length) {
