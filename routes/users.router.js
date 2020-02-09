@@ -1,10 +1,15 @@
 const usersRouter = require("express").Router();
-const { getUsers, getUserById } = require("../controllers/users.controller");
+const {
+  getUsers,
+  getUserById,
+  postUser
+} = require("../controllers/users.controller");
 const { send405Error } = require("../errors/errors");
 
 usersRouter
   .route("/")
   .get(getUsers)
+  .post(postUser)
   .all(send405Error);
 
 usersRouter

@@ -5,7 +5,8 @@ exports.pSQLErrors = (err, req, res, next) => {
       "22P02": { status: 400, msg: "Bad request!" },
       "23503": { status: 404, msg: "Not found!" },
       "42703": { status: 400, msg: "Bad request!" },
-      "23502": { status: 400, msg: "Bad request!" }
+      "23502": { status: 400, msg: "Bad request!" },
+      "23505": { status: 400, msg: "Bad request!" }
     };
     if (errRef[err.code] === undefined) {
       res.status(404).send({ msg: "General error!" });

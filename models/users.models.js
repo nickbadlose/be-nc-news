@@ -18,3 +18,20 @@ exports.fetchUserById = username => {
       return user;
     });
 };
+
+exports.addUser = (username, avatar_url, name) => {
+  if (
+    typeof username !== "string" ||
+    typeof avatar_url !== "string" ||
+    typeof name !== "string"
+  ) {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
+
+  return connection("users")
+    .insert({ username, avatar_url, name })
+    .returning("*")
+    .then(([user]) => {
+      return user;
+    });
+};

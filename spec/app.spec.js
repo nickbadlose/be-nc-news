@@ -63,9 +63,62 @@ describe("/api", () => {
       });
     });
 
+    describe("POST", () => {
+      it("POST: returns 201 and the new topic", () => {
+        const newTopic = {
+          slug: "newTopic",
+          description: "This is a new topic"
+        };
+        return request(app)
+          .post("/api/topics")
+          .send(newTopic)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body).to.contain.keys("topic");
+            expect(body.topic).to.contain.keys("slug", "description");
+          });
+      });
+      it("POST: returns 400 Bad request! when passed a slug that already exists", () => {
+        const newTopic = {
+          slug: "mitch",
+          description: "This is a new topic"
+        };
+        return request(app)
+          .post("/api/topics")
+          .send(newTopic)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
+      it("POST: returns 400 Bad request! when not passed either the slug or description key", () => {
+        const newTopic = {};
+        return request(app)
+          .post("/api/topics")
+          .send(newTopic)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
+      it("POST: returns 400 Bad request! when passed an invalid slug or description value", () => {
+        const newTopic = {
+          slug: ["new topic"],
+          description: ["this is a new article"]
+        };
+        return request(app)
+          .post("/api/topics")
+          .send(newTopic)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
+    });
+
     describe("INVALID METHODS", () => {
       it("status:405", () => {
-        const invalidMethods = ["patch", "post", "put", "delete"];
+        const invalidMethods = ["patch", "put", "delete"];
         const methodPromises = invalidMethods.map(method => {
           return request(app)
             [method]("/api/topics")
@@ -94,9 +147,69 @@ describe("/api", () => {
       });
     });
 
+    describe("POST", () => {
+      it("POST: returns 201 and the new user", () => {
+        const newUser = {
+          username: "newUser",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          name: "new user"
+        };
+        return request(app)
+          .post("/api/users")
+          .send(newUser)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body).to.contain.keys("user");
+            expect(body.user).to.contain.keys("username", "name");
+          });
+      });
+      it("POST: returns 400 Bad request! when passed a username that already exists", () => {
+        const newUser = {
+          username: "butter_bridge",
+          avatar_url:
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          name: "new user"
+        };
+        return request(app)
+          .post("/api/users")
+          .send(newUser)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
+      it("POST: returns 400 Bad request! when not passed either the username or name key", () => {
+        const newUser = {};
+        return request(app)
+          .post("/api/users")
+          .send(newUser)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
+      it("POST: returns 400 Bad request! when passed an invalid username, name or avatar_url value", () => {
+        const newUser = {
+          username: ["newUser"],
+          avatar_url: [
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+          ],
+          name: ["new user"]
+        };
+        return request(app)
+          .post("/api/users")
+          .send(newUser)
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Bad request!");
+          });
+      });
+    });
+
     describe("INVALID METHODS", () => {
       it("status:405", () => {
-        const invalidMethods = ["patch", "post", "put", "delete"];
+        const invalidMethods = ["patch", "put", "delete"];
         const methodPromises = invalidMethods.map(method => {
           return request(app)
             [method]("/api/users")
