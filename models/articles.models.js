@@ -90,7 +90,8 @@ exports.fetchArticles = (
   author,
   topic,
   limit = 10,
-  p = 1
+  p = 1,
+  title
 ) => {
   if (order !== "asc" && order !== "desc") {
     return Promise.reject({ status: 400, msg: "Bad request!" });
@@ -117,18 +118,22 @@ exports.fetchArticles = (
       .modify(query => {
         if (username) query.where("articles.author", username);
         if (topic) query.where("articles.topic", topic);
+        if (title) query.where({ title });
       })
       .count({ total_count: "articles.article_id" })
       .limit(limit)
       .offset((p - 1) * 10),
     checkIfUserExists(username),
     checkIfTopicExists(topic),
-    getArticleCount(username, topic)
+    getArticleCount(username, topic, title)
   ];
 
   return Promise.all(promises).then(
     ([articlesArr, userPredicate, topicPredicate, total_count]) => {
       if (!userPredicate || !topicPredicate) {
+        return Promise.reject({ status: 404, msg: "Not found!" });
+      }
+      if (!articlesArr.length && title !== undefined) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
       const articles = {
@@ -202,11 +207,12 @@ const checkIfArticleExists = article_id => {
     });
 };
 
-const getArticleCount = (username, topic) => {
+const getArticleCount = (username, topic, title) => {
   return connection("articles")
     .modify(query => {
       if (username) query.where("articles.author", username);
-      if (topic) query.where("articles.topic", topic);
+      if (topic) query.where({ topic });
+      if (title) query.where({ title });
     })
     .count({ total_count: "article_id" })
     .then(([{ total_count }]) => {

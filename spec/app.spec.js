@@ -516,6 +516,26 @@ describe("/api", () => {
             expect(body.total_count).to.equal("11");
           });
       });
+      it("GET: returns the articles with the passed title query", () => {
+        return request(app)
+          .get("/api/articles?title=Student SUES Mitch!")
+          .expect(200)
+          .then(({ body }) => {
+            const output = body.articles.every(article => {
+              return article.title === "Student SUES Mitch!";
+            });
+            expect(output).to.be.true;
+            expect(body.total_count).to.equal("1");
+          });
+      });
+      it("GET: returns 404 Not found! when passed a title that doesn't reference any existing article", () => {
+        return request(app)
+          .get("/api/articles?title=Not a title")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("Not found!");
+          });
+      });
     });
 
     describe("POST", () => {
