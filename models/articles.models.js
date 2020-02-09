@@ -17,10 +17,20 @@ exports.fetchArticleById = article_id => {
     });
 };
 
-exports.editArticleById = (article_id, votes = 0) => {
+exports.editArticleById = (article_id, votes, body) => {
+  if (typeof body !== "string" && body) {
+    return Promise.reject({ status: 400, msg: "Bad request!" });
+  }
   return connection("articles")
     .where({ article_id })
-    .increment({ votes })
+    .modify(query => {
+      if (body) {
+        query.update({ body });
+      }
+      if (votes) {
+        query.increment({ votes });
+      }
+    })
     .returning("*")
     .then(articleArr => {
       if (!articleArr.length) {

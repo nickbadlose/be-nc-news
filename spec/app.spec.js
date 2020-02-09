@@ -564,7 +564,7 @@ describe("/api", () => {
       });
 
       describe("PATCH", () => {
-        it("PATCH: returns 202 and an object containing the updated article when passed an article_id", () => {
+        it("PATCH: returns 200 and an object containing the updated article when passed an article_id", () => {
           const votes = { inc_votes: 1 };
           return request(app)
             .patch("/api/articles/1")
@@ -654,6 +654,64 @@ describe("/api", () => {
                 "created_at",
                 "topic"
               );
+            });
+        });
+        it("PATCH: returns 200 and an object containing the updated article when passed an article_id", () => {
+          const updatedArticle = {
+            body: "updated article body"
+          };
+          return request(app)
+            .patch("/api/articles/1")
+            .send(updatedArticle)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("article");
+              expect(body.article.body).to.equal("updated article body");
+              expect(body.article).to.contain.keys(
+                "article_id",
+                "title",
+                "body",
+                "votes",
+                "author",
+                "created_at",
+                "topic"
+              );
+            });
+        });
+        it("PATCH: returns 200 and an object containing the updated article when passed an article_id and edits both the votes and body if passed both keys", () => {
+          const updatedArticle = {
+            inc_votes: 1,
+            body: "updated article body"
+          };
+          return request(app)
+            .patch("/api/articles/1")
+            .send(updatedArticle)
+            .expect(200)
+            .then(({ body }) => {
+              expect(body).to.contain.keys("article");
+              expect(body.article.body).to.equal("updated article body");
+              expect(body.article.votes).to.equal(101);
+              expect(body.article).to.contain.keys(
+                "article_id",
+                "title",
+                "body",
+                "votes",
+                "author",
+                "created_at",
+                "topic"
+              );
+            });
+        });
+        it("PATCH: returns 400 Bad request! when passed an invalid body value", () => {
+          const updatedArticle = {
+            body: ["updated article body"]
+          };
+          return request(app)
+            .patch("/api/articles/1")
+            .send(updatedArticle)
+            .expect(400)
+            .then(({ body: { msg } }) => {
+              expect(msg).to.equal("Bad request!");
             });
         });
       });
