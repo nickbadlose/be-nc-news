@@ -67,7 +67,7 @@ exports.fetchCommentsByArticleId = (
   }
   const promises = [
     connection("comments")
-      .select("comment_id", "votes", "created_at", "author", "body")
+      .select("*")
       .where({ article_id })
       .orderBy(sort_by, order)
       .limit(limit)
@@ -176,10 +176,7 @@ const checkIfUserExists = username => {
     return connection("users")
       .select("*")
       .where({ username })
-      .then(userArr => {
-        if (!userArr.length) return false;
-        else return true;
-      });
+      .then(userArr => !!userArr.length);
   }
 };
 
@@ -189,10 +186,7 @@ const checkIfTopicExists = topic => {
     return connection("topics")
       .select("*")
       .where("slug", topic)
-      .then(topicArr => {
-        if (!topicArr.length) return false;
-        else return true;
-      });
+      .then(topicArr => !!topicArr.length);
   }
 };
 
@@ -201,10 +195,7 @@ const checkIfArticleExists = article_id => {
   return connection("articles")
     .select("*")
     .where({ article_id })
-    .then(articleArr => {
-      if (!articleArr.length) return false;
-      else return true;
-    });
+    .then(articleArr => !!articleArr.length);
 };
 
 const getArticleCount = (username, topic, title) => {
