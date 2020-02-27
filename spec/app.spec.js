@@ -343,11 +343,12 @@ describe("/api", () => {
 
   describe("/articles", () => {
     describe("GET", () => {
-      it("GET: returns 200 and an object with a key of articles containing an array of all the articles", () => {
+      it.only("GET: returns 200 and an object with a key of articles containing an array of all the articles", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)
           .then(({ body }) => {
+            console.log(body);
             expect(body).to.contain.keys("articles");
             body.articles.forEach(article => {
               return expect(article).to.contain.keys(
