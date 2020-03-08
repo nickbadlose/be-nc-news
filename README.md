@@ -77,8 +77,10 @@ To host your API follow the instructions in the hosting.md file in this repo. Th
 ## Links to APP
 
 **Frontend APP github repo: https://github.com/nickbadlose/NC-News**
+
 **Hosted backend API: https://not-quite-reddit.herokuapp.com/api**
-**Deployed APP: **
+
+**Deployed APP: https://pensive-swirles-ce412d.netlify.com/**
 
 ## Acknowledgments
 
