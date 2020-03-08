@@ -343,7 +343,7 @@ describe("/api", () => {
 
   describe("/articles", () => {
     describe("GET", () => {
-      it.only("GET: returns 200 and an object with a key of articles containing an array of all the articles", () => {
+      it("GET: returns 200 and an object with a key of articles containing an array of all the articles", () => {
         return request(app)
           .get("/api/articles")
           .expect(200)

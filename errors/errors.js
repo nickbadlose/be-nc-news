@@ -1,6 +1,6 @@
 exports.pSQLErrors = (err, req, res, next) => {
   if (err.code) {
-    console.log("in pSQLErrors:", err.code);
+    // console.log("in pSQLErrors:", err.code);
     const errRef = {
       "22P02": { status: 400, msg: "Bad request!" },
       "23503": { status: 404, msg: "Not found!" },
@@ -17,7 +17,7 @@ exports.pSQLErrors = (err, req, res, next) => {
 
 exports.generalErrors = (err, req, res, next) => {
   const { status, msg } = err;
-  console.log("in general errors:", err);
+  // console.log("in general errors:", err);
   res.status(status).send({ msg });
 };
 
