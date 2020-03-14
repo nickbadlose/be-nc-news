@@ -14,7 +14,7 @@ describe("/api", () => {
   beforeEach(() => connection.seed.run());
 
   describe("GET", () => {
-    it("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
+    it.only("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
       return request(app)
         .get("/api/")
         .expect(200)

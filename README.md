@@ -4,7 +4,7 @@ The Northcoders News API. All the data you need setup your very own news app ser
 
 ## Getting Started
 
-**Fork this repository and then clone it**
+**Clone this repository**
 
 In your terminal type the following commands:
 
@@ -16,7 +16,7 @@ cd be-nc-news
 
 ## Prerequisites
 
-**You will need sosme form of packet manager to install the necessary tools to use the API, in this README we will be using node packet manager (npm)**
+**You will need some form of packet manager to install the necessary tools to use the API, in this README we will be using node packet manager (npm)**
 
 If you don't have npm see this link on how to install it: https://www.npmjs.com/get-npm
 
@@ -36,6 +36,47 @@ Run the following command:
 
 ```bash
 npm install
+```
+
+**You will also need to create your own knexfile.js with all your configurations in it to run the project**
+
+```
+// in knexfile.js
+
+const { DB_URL } = process.env;
+const ENV = process.env.NODE_ENV || "development";
+
+const baseConfig = {
+  client: "pg",
+  migrations: {
+    directory: "./db/migrations"
+  },
+  seeds: {
+    directory: "./db/seeds"
+  }
+};
+
+const customConfig = {
+  production: {
+    connection: `${DB_URL}?ssl=true`
+  },
+  development: {
+    connection: {
+      database: "nc_news",
+      username: "YOUR_PSQL_USERNAME",
+      password: "YOUR_PSQL_PASSWORD"
+    }
+  },
+  test: {
+    connection: {
+      database: "nc_news_test",
+      username: "YOUR_PSQL_USERNAME",
+      password: "YOUR_PSQL_PASSWORD"
+    }
+  }
+};
+
+module.exports = { ...customConfig[ENV], ...baseConfig };
 ```
 
 ## Running the tests
@@ -74,13 +115,13 @@ To host your API follow the instructions in the hosting.md file in this repo. Th
 
 **Here is a link to my hosted version: https://not-quite-reddit.herokuapp.com/api**
 
-## Links to APP
+## Links to APP/API
 
-**Frontend APP github repo: https://github.com/nickbadlose/NC-News**
+**Frontend APP github repo: https://github.com/nickbadlose/nc-news .**
 
-**Hosted backend API: https://not-quite-reddit.herokuapp.com/api**
+**Hosted backend API: https://not-quite-reddit.herokuapp.com/api .**
 
-**Deployed APP: https://pensive-swirles-ce412d.netlify.com/**
+**Deployed APP: https://trusting-mclean-e3947d.netlify.com/ .**
 
 ## Acknowledgments
 
