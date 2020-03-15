@@ -14,7 +14,7 @@ describe("/api", () => {
   beforeEach(() => connection.seed.run());
 
   describe("GET", () => {
-    it.only("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
+    it("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
       return request(app)
         .get("/api/")
         .expect(200)
@@ -348,7 +348,6 @@ describe("/api", () => {
           .get("/api/articles")
           .expect(200)
           .then(({ body }) => {
-            console.log(body);
             expect(body).to.contain.keys("articles");
             body.articles.forEach(article => {
               return expect(article).to.contain.keys(

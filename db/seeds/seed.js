@@ -1,10 +1,10 @@
+const ENV = process.env.NODE_ENV || "development";
 const {
   topicData,
   articleData,
   commentData,
   userData
 } = require("../data/index.js");
-
 const { formatDates, formatComments, makeRefObj } = require("../utils/utils");
 
 exports.seed = function(knex) {
@@ -43,5 +43,7 @@ exports.seed = function(knex) {
         .insert(formattedComments)
         .returning("*");
     })
-    .then(commentRows => {});
+    .then(commentRows => {
+      console.log(`${ENV} database seeded`);
+    });
 };

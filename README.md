@@ -81,18 +81,16 @@ module.exports = { ...customConfig[ENV], ...baseConfig };
 
 ## Running the tests
 
-**Should you wish to run the tests you will need to install some of the dev-dependencies for this project**
-
-Run the following command:
-
-```bash
-npm install chai chai-sorted mocha sams-chai-sorted supertest -D
-```
-
-then run:
+To test the app run the following command:
 
 ```bash
 npm test
+```
+
+To test the utility functions, run the following command:
+
+```bash
+npm run test-utils
 ```
 
 ## Run locally
