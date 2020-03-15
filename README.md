@@ -109,7 +109,7 @@ try going to http://localhost:9090/api/articles and see what comes back.
 
 ## Hosting
 
-To host your API follow the instructions in the hosting.md file in this repo. This README uses heroku to host the app.
+Should you wish to host your API follow the instructions in the hosting.md file in this repo. This README uses heroku to host the app.
 
 **Here is a link to my hosted version: https://not-quite-reddit.herokuapp.com/api**
 
