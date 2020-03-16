@@ -95,15 +95,23 @@ npm run test-utils
 
 ## Run locally
 
-You should now be ready to run this project locally. To do so, run the following command:
+You should now be ready to run this project locally. To do so, first you need to set up and seed the databases. Run the following command:
+
+```bash
+npm run setup-dbs
+
+npm run seed
+```
+
+Then to run locally, run:
 
 ```bash
 npm start
 ```
 
-Then in your browser go to http://localhost:9090 to access your API.
+Then in your browser go to http://localhost:9090/api/ to access your API.
 
-go to http://localhost:9090/api/ to see a list of all the possible endpoints with example responses.
+http://localhost:9090/api/ will produce a list of all the possible endpoints with example responses.
 
 try going to http://localhost:9090/api/articles and see what comes back.
 
