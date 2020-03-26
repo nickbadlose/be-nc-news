@@ -102,7 +102,6 @@ exports.fetchArticles = (
   const username = author;
   const promises = [
     connection("articles")
-      .count({ total_count: "articles.article_id" })
       .select(
         "articles.author",
         "articles.title",
@@ -121,7 +120,6 @@ exports.fetchArticles = (
         if (topic) query.where("articles.topic", topic);
         if (title) query.where({ title });
       })
-      .count({ total_count: "articles.article_id" })
       .limit(limit)
       .offset((p - 1) * 10),
     checkIfUserExists(username),
