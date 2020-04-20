@@ -22,6 +22,8 @@ If you don't have npm see this link on how to install it: https://www.npmjs.com/
 
 **You will need Node version v13.0.1 or later to use this API**
 
+**You will also need PSQL version 10.12 or later to use this API https://www.postgresql.org/docs/9.3/tutorial-install.html**
+
 ## Installing
 
 **Check you're in the be-nc-news directory before running the following commands**
