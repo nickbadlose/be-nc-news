@@ -5,22 +5,27 @@ const bcrypt = require("bcrypt");
 
 exports.sendToken = (req, res, next) => {
   const { username, password } = req.body;
-
-  return connection("users")
+  return connection
     .select("*")
+    .from("users")
     .where({ username })
     .then(([user]) => {
-      if (!user || password !== user.password) {
+      if (!user) {
+        console.log("hello");
         next({ status: 401, msg: "invalid username or password" });
       } else {
+        return Promise.all([bcrypt.compare(password, user.password), user]);
+      }
+    })
+    .then(([passwordOk, user]) => {
+      if (user && passwordOk) {
         const token = jwt.sign(
-          {
-            user: user.username,
-            iat: Date.now(),
-          },
+          { user: user.username, iat: Date.now() },
           JWT_SECRET
         );
-        res.status(200).send({ token });
+        res.send({ token });
+      } else {
+        next({ status: 401, msg: "invalid username or password" });
       }
     })
     .catch(next);

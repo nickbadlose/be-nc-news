@@ -11,6 +11,8 @@ const requestDefaults = defaults(require("supertest")(app));
 
 chai.use(samsChaiSorted);
 
+// commented out before each hooks in seperate blocks which I tried to use to speed up testing. didn't work
+
 describe("/api", () => {
   after(() => connection.destroy());
   beforeEach(() => {
@@ -578,6 +580,16 @@ describe("/api", () => {
     });
 
     describe("POST", () => {
+      // beforeEach(() => {
+      //   return request(app)
+      //     .post("/api/login")
+      //     .expect(200)
+      //     .send({ username: "butter_bridge", password: "123" })
+      //     .then(({ body: { token } }) => {
+      //       requestDefaults.set("Authorization", `BEARER ${token}`);
+      //     });
+      // });
+
       it("POST: returns 201 and the new article", () => {
         const newArticle = {
           title: "New article",
@@ -917,6 +929,16 @@ describe("/api", () => {
 
       describe("/comments", () => {
         describe("POST", () => {
+          // beforeEach(() => {
+          //   return request(app)
+          //     .post("/api/login")
+          //     .expect(200)
+          //     .send({ username: "butter_bridge", password: "123" })
+          //     .then(({ body: { token } }) => {
+          //       requestDefaults.set("Authorization", `BEARER ${token}`);
+          //     });
+          // });
+
           it("POST: returns 201 and an object containing the posted comment", () => {
             const comment = {
               username: "butter_bridge",
