@@ -6,12 +6,53 @@ const connection = require("../db/connection");
 const app = require("../app");
 const samsChaiSorted = require("sams-chai-sorted");
 const endpoints = require("../endpoints.json");
+const defaults = require("superagent-defaults");
+const requestDefaults = defaults(require("supertest")(app));
 
 chai.use(samsChaiSorted);
 
 describe("/api", () => {
   after(() => connection.destroy());
-  beforeEach(() => connection.seed.run());
+  beforeEach(() => {
+    return connection.seed
+      .run()
+      .then(() =>
+        request(app)
+          .post("/api/login")
+          .expect(200)
+          .send({ username: "butter_bridge", password: "123" })
+      )
+      .then(({ body: { token } }) => {
+        requestDefaults.set("Authorization", `BEARER ${token}`);
+      });
+  });
+
+  describe("/login", () => {
+    it("POST responds with an access token given correct username and password", () =>
+      request(app)
+        .post("/api/login")
+        .send({ username: "rogersop", password: "123" })
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.have.ownProperty("token");
+        }));
+    it("POST responds with status 401 for an incorrect password", () =>
+      request(app)
+        .post("/api/login")
+        .send({ username: "rogersop", password: "wrong-password" })
+        .expect(401)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal("invalid username or password");
+        }));
+    it("POST responds with status 401 for an incorrect username", () =>
+      request(app)
+        .post("/api/login")
+        .send({ username: "paul", password: "123" })
+        .expect(401)
+        .then(({ body: { msg } }) => {
+          expect(msg).to.equal("invalid username or password");
+        }));
+  });
 
   describe("GET", () => {
     it("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
@@ -26,8 +67,8 @@ describe("/api", () => {
   });
 
   describe("/theEndPointThatWasnt", () => {
-    it("GET: returns 404 Not found! when passed an endpoint that doesn't exist", () => {
-      return request(app).get("/api/notanendpoint").expect(404);
+    it("GET: returns 405 Method not found! when passed an endpoint that doesn't exist", () => {
+      return request(app).get("/api/notanendpoint").expect(405);
     });
   });
 
@@ -537,14 +578,14 @@ describe("/api", () => {
     });
 
     describe("POST", () => {
-      it("POST: returns 201 and the updated article", () => {
+      it("POST: returns 201 and the new article", () => {
         const newArticle = {
           title: "New article",
           body: "This is a new article",
           topic: "mitch",
           author: "butter_bridge",
         };
-        return request(app)
+        return requestDefaults
           .post("/api/articles")
           .send(newArticle)
           .expect(201)
@@ -561,6 +602,22 @@ describe("/api", () => {
             );
           });
       });
+      it("POST: responds with 401 if no token provided", () => {
+        const newArticle = {
+          title: "New article",
+          body: "This is a new article",
+          topic: "not a topic",
+          author: "not a user",
+        };
+        return requestDefaults
+          .post("/api/articles")
+          .set("Authorization", ``)
+          .send(newArticle)
+          .expect(401)
+          .then(({ body: { msg } }) => {
+            expect(msg).to.equal("unauthorised");
+          });
+      });
       it("POST: returns 404 Not found! when passed a username or topic that doesn't exist", () => {
         const newArticle = {
           title: "New article",
@@ -568,7 +625,7 @@ describe("/api", () => {
           topic: "not a topic",
           author: "not a user",
         };
-        return request(app)
+        return requestDefaults
           .post("/api/articles")
           .send(newArticle)
           .expect(404)
@@ -578,7 +635,7 @@ describe("/api", () => {
       });
       it("POST: returns 400 Bad request! when not passed one of the 4 required keys", () => {
         const newArticle = {};
-        return request(app)
+        return requestDefaults
           .post("/api/articles")
           .send(newArticle)
           .expect(400)
@@ -593,7 +650,7 @@ describe("/api", () => {
           topic: "mitch",
           author: "butter_bridge",
         };
-        return request(app)
+        return requestDefaults
           .post("/api/articles")
           .send(newArticle)
           .expect(400)
@@ -865,7 +922,7 @@ describe("/api", () => {
               username: "butter_bridge",
               body: "I'll butter your bridge",
             };
-            return request(app)
+            return requestDefaults
               .post("/api/articles/1/comments")
               .send(comment)
               .expect(201)
@@ -881,12 +938,26 @@ describe("/api", () => {
                 );
               });
           });
+          it("POST: responds with 401 if no token provided", () => {
+            const comment = {
+              username: "butter_bridge",
+              body: "I'll butter your bridge",
+            };
+            return requestDefaults
+              .post("/api/articles/1/comments")
+              .set("Authorization", ``)
+              .send(comment)
+              .expect(401)
+              .then(({ body: { msg } }) => {
+                expect(msg).to.equal("unauthorised");
+              });
+          });
           it("POST: returns 404 Not found! when passed an article_id that doesn't exist", () => {
             const comment = {
               username: "butter_bridge",
               body: "I'll butter your bridge",
             };
-            return request(app)
+            return requestDefaults
               .post("/api/articles/100/comments")
               .send(comment)
               .expect(404)
@@ -899,7 +970,7 @@ describe("/api", () => {
               username: "butter_bridge",
               body: "I'll butter your bridge",
             };
-            return request(app)
+            return requestDefaults
               .post("/api/articles/abc/comments")
               .send(comment)
               .expect(400)
@@ -912,7 +983,7 @@ describe("/api", () => {
               hello: "butter_bridge",
               byebye: "I'll butter your bridge",
             };
-            return request(app)
+            return requestDefaults
               .post("/api/articles/1/comments")
               .send(comment)
               .expect(400)
@@ -925,7 +996,7 @@ describe("/api", () => {
               username: 111,
               body: ["I'll butter your bridge"],
             };
-            return request(app)
+            return requestDefaults
               .post("/api/articles/1/comments")
               .send(comment)
               .expect(400)

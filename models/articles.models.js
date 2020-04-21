@@ -1,15 +1,15 @@
 const connection = require("../db/connection");
 
-exports.fetchArticleById = article_id => {
+exports.fetchArticleById = (article_id) => {
   return connection("articles")
     .select("articles.*")
     .count({ comment_count: "comment_id" })
-    .leftJoin("comments", function() {
+    .leftJoin("comments", function () {
       this.on("articles.article_id", "comments.article_id");
     })
     .groupBy("articles.article_id")
     .where("articles.article_id", article_id)
-    .then(articleArr => {
+    .then((articleArr) => {
       if (!articleArr.length) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
@@ -23,7 +23,7 @@ exports.editArticleById = (article_id, votes, body) => {
   }
   return connection("articles")
     .where({ article_id })
-    .modify(query => {
+    .modify((query) => {
       if (body) {
         query.update({ body });
       }
@@ -32,7 +32,7 @@ exports.editArticleById = (article_id, votes, body) => {
       }
     })
     .returning("*")
-    .then(articleArr => {
+    .then((articleArr) => {
       if (!articleArr.length) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
@@ -47,7 +47,7 @@ exports.addCommentByArticleId = (article_id, author, body) => {
   return connection("comments")
     .insert({ article_id, author, body })
     .returning("*")
-    .then(commentArr => {
+    .then((commentArr) => {
       return commentArr;
     });
 };
@@ -72,7 +72,7 @@ exports.fetchCommentsByArticleId = (
       .orderBy(sort_by, order)
       .limit(limit)
       .offset((p - 1) * 10),
-    checkIfArticleExists(article_id)
+    checkIfArticleExists(article_id),
   ];
 
   return Promise.all(promises).then(([commentsArr, articlePredicate]) => {
@@ -115,7 +115,7 @@ exports.fetchArticles = (
       .count({ comment_count: "comment_id" })
       .groupBy("articles.article_id")
       .orderBy(sort_by, order)
-      .modify(query => {
+      .modify((query) => {
         if (username) query.where("articles.author", username);
         if (topic) query.where("articles.topic", topic);
         if (title) query.where({ title });
@@ -124,7 +124,7 @@ exports.fetchArticles = (
       .offset((p - 1) * 10),
     checkIfUserExists(username),
     checkIfTopicExists(topic),
-    getArticleCount(username, topic, title)
+    getArticleCount(username, topic, title),
   ];
 
   return Promise.all(promises).then(
@@ -137,7 +137,7 @@ exports.fetchArticles = (
       }
       const articles = {
         articles: articlesArr,
-        total_count: total_count
+        total_count: total_count,
       };
       return articles;
     }
@@ -157,11 +157,11 @@ exports.addArticle = (title, body, topic, author) => {
     });
 };
 
-exports.removeArticleById = article_id => {
+exports.removeArticleById = (article_id) => {
   return connection("articles")
     .where({ article_id })
     .del()
-    .then(deletedRows => {
+    .then((deletedRows) => {
       if (deletedRows === 0) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
@@ -169,37 +169,37 @@ exports.removeArticleById = article_id => {
     });
 };
 
-const checkIfUserExists = username => {
+const checkIfUserExists = (username) => {
   if (username === undefined) return true;
   else {
     return connection("users")
       .select("*")
       .where({ username })
-      .then(userArr => !!userArr.length);
+      .then((userArr) => !!userArr.length);
   }
 };
 
-const checkIfTopicExists = topic => {
+const checkIfTopicExists = (topic) => {
   if (topic === undefined) return true;
   else {
     return connection("topics")
       .select("*")
       .where("slug", topic)
-      .then(topicArr => !!topicArr.length);
+      .then((topicArr) => !!topicArr.length);
   }
 };
 
-const checkIfArticleExists = article_id => {
+const checkIfArticleExists = (article_id) => {
   if (article_id === undefined) return true;
   return connection("articles")
     .select("*")
     .where({ article_id })
-    .then(articleArr => !!articleArr.length);
+    .then((articleArr) => !!articleArr.length);
 };
 
 const getArticleCount = (username, topic, title) => {
   return connection("articles")
-    .modify(query => {
+    .modify((query) => {
       if (username) query.where("articles.author", username);
       if (topic) query.where({ topic });
       if (title) query.where({ title });

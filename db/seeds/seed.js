@@ -3,17 +3,13 @@ const {
   topicData,
   articleData,
   commentData,
-  userData
+  userData,
 } = require("../data/index.js");
 const { formatDates, formatComments, makeRefObj } = require("../utils/utils");
 
-exports.seed = function(knex) {
-  const topicsInsertions = knex("topics")
-    .insert(topicData)
-    .returning("*");
-  const usersInsertions = knex("users")
-    .insert(userData)
-    .returning("*");
+exports.seed = function (knex) {
+  const topicsInsertions = knex("topics").insert(topicData).returning("*");
+  const usersInsertions = knex("users").insert(userData).returning("*");
   return knex.migrate
     .rollback()
     .then(() => knex.migrate.latest())
@@ -23,11 +19,9 @@ exports.seed = function(knex) {
     .then(([topicRows, userRows]) => {
       const formattedArticleData = formatDates(articleData);
       const promises = [
-        knex("articles")
-          .insert(formattedArticleData)
-          .returning("*"),
+        knex("articles").insert(formattedArticleData).returning("*"),
         topicRows,
-        userRows
+        userRows,
       ];
       return Promise.all(promises);
     })
@@ -39,11 +33,9 @@ exports.seed = function(knex) {
         "article_id",
         "belongs_to"
       );
-      return knex("comments")
-        .insert(formattedComments)
-        .returning("*");
+      return knex("comments").insert(formattedComments).returning("*");
     })
-    .then(commentRows => {
-      console.log(`${ENV} database seeded`);
+    .then((commentRows) => {
+      // console.log(`${ENV} database seeded`);
     });
 };

@@ -6,27 +6,26 @@ const {
   getCommentsByArticleId,
   getArticles,
   postArticle,
-  deleteArticleById
+  deleteArticleById,
 } = require("../controllers/articles.controllers");
-const { send405Error } = require("../errors/errors");
+const { validateToken } = require("../controllers/authorization.controllers");
 
-articlesRouter
-  .route("/")
-  .get(getArticles)
-  .post(postArticle)
-  .all(send405Error);
+articlesRouter.route("/").get(getArticles);
 
-articlesRouter
-  .route("/:article_id/comments")
-  .get(getCommentsByArticleId)
-  .post(postCommentByArticleId)
-  .all(send405Error);
+articlesRouter.route("/:article_id/comments").get(getCommentsByArticleId);
 
 articlesRouter
   .route("/:article_id")
   .get(getArticleById)
   .patch(updateArticleById)
-  .delete(deleteArticleById)
-  .all(send405Error);
+  .delete(deleteArticleById);
+
+// validation needed for below routes
+
+articlesRouter.route("/").post(validateToken, postArticle);
+
+articlesRouter
+  .route("/:article_id/comments")
+  .post(validateToken, postCommentByArticleId);
 
 module.exports = articlesRouter;

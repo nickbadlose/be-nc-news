@@ -7,7 +7,7 @@ const loginRouter = require("./login.router");
 const { getEndpoints } = require("../controllers/api.controllers");
 const { send405Error } = require("../errors/errors");
 
-apiRouter.route("/").get(getEndpoints).all(send405Error);
+apiRouter.route("/").get(getEndpoints);
 
 apiRouter.use("/topics", topicsRouter);
 
@@ -18,5 +18,7 @@ apiRouter.use("/articles", articlesRouter);
 apiRouter.use("/comments", commentsRouter);
 
 apiRouter.use("/login", loginRouter);
+
+apiRouter.all("/*", send405Error);
 
 module.exports = apiRouter;

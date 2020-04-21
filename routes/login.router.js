@@ -1,6 +1,6 @@
 const loginRouter = require("express").Router();
-const { postLogin } = require("../controllers/authorization.controllers");
+const { sendToken } = require("../controllers/authorization.controllers");
 
-loginRouter.route("/login").post(postLogin);
+loginRouter.route("/").post(sendToken);
 
 module.exports = loginRouter;
