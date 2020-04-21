@@ -27,16 +27,14 @@ describe("/api", () => {
 
   describe("/theEndPointThatWasnt", () => {
     it("GET: returns 404 Not found! when passed an endpoint that doesn't exist", () => {
-      return request(app)
-        .get("/api/notanendpoint")
-        .expect(404);
+      return request(app).get("/api/notanendpoint").expect(404);
     });
   });
 
   describe("INVALID METHODS", () => {
     it("status:405", () => {
       const invalidMethods = ["patch", "post", "put", "delete"];
-      const methodPromises = invalidMethods.map(method => {
+      const methodPromises = invalidMethods.map((method) => {
         return request(app)
           [method]("/api/")
           .expect(405)
@@ -56,7 +54,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body }) => {
             expect(body).to.contain.keys("topics");
-            body.topics.forEach(topic => {
+            body.topics.forEach((topic) => {
               expect(topic).to.contain.keys("slug", "description");
             });
           });
@@ -67,7 +65,7 @@ describe("/api", () => {
       it("POST: returns 201 and the new topic", () => {
         const newTopic = {
           slug: "newTopic",
-          description: "This is a new topic"
+          description: "This is a new topic",
         };
         return request(app)
           .post("/api/topics")
@@ -81,7 +79,7 @@ describe("/api", () => {
       it("POST: returns 400 Bad request! when passed a slug that already exists", () => {
         const newTopic = {
           slug: "mitch",
-          description: "This is a new topic"
+          description: "This is a new topic",
         };
         return request(app)
           .post("/api/topics")
@@ -104,7 +102,7 @@ describe("/api", () => {
       it("POST: returns 400 Bad request! when passed an invalid slug or description value", () => {
         const newTopic = {
           slug: ["new topic"],
-          description: ["this is a new article"]
+          description: ["this is a new article"],
         };
         return request(app)
           .post("/api/topics")
@@ -119,7 +117,7 @@ describe("/api", () => {
     describe("INVALID METHODS", () => {
       it("status:405", () => {
         const invalidMethods = ["patch", "put", "delete"];
-        const methodPromises = invalidMethods.map(method => {
+        const methodPromises = invalidMethods.map((method) => {
           return request(app)
             [method]("/api/topics")
             .expect(405)
@@ -140,8 +138,8 @@ describe("/api", () => {
           .expect(200)
           .then(({ body }) => {
             expect(body).to.contain.keys("users");
-            body.users.forEach(user => {
-              expect(user).to.contain.keys("username", "avatar_url", "name");
+            body.users.forEach((user) => {
+              expect(user).to.not.contain.keys("password");
             });
           });
       });
@@ -153,7 +151,7 @@ describe("/api", () => {
           username: "newUser",
           avatar_url:
             "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
-          name: "new user"
+          name: "new user",
         };
         return request(app)
           .post("/api/users")
@@ -169,7 +167,7 @@ describe("/api", () => {
           username: "butter_bridge",
           avatar_url:
             "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
-          name: "new user"
+          name: "new user",
         };
         return request(app)
           .post("/api/users")
@@ -193,9 +191,9 @@ describe("/api", () => {
         const newUser = {
           username: ["newUser"],
           avatar_url: [
-            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+            "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
           ],
-          name: ["new user"]
+          name: ["new user"],
         };
         return request(app)
           .post("/api/users")
@@ -210,7 +208,7 @@ describe("/api", () => {
     describe("INVALID METHODS", () => {
       it("status:405", () => {
         const invalidMethods = ["patch", "put", "delete"];
-        const methodPromises = invalidMethods.map(method => {
+        const methodPromises = invalidMethods.map((method) => {
           return request(app)
             [method]("/api/users")
             .expect(405)
@@ -252,7 +250,7 @@ describe("/api", () => {
         it("PATCH: returns 200 and an object containing the updated user keyed by user", () => {
           const updatedUser = {
             avatar_url: "new avatar url",
-            name: "new name"
+            name: "new name",
           };
           return request(app)
             .patch("/api/users/butter_bridge")
@@ -267,7 +265,7 @@ describe("/api", () => {
         });
         it("PATCH: returns 200 and an object containing the updated user keyed by user when only passed one key to update", () => {
           const updatedUser = {
-            avatar_url: "new avatar url"
+            avatar_url: "new avatar url",
           };
           return request(app)
             .patch("/api/users/butter_bridge")
@@ -299,7 +297,7 @@ describe("/api", () => {
         it("PATCH: returns 404 Not found! when passed a username that doesn't exist", () => {
           const updatedUser = {
             avatar_url: "new avatar url",
-            name: "new name"
+            name: "new name",
           };
           return request(app)
             .patch("/api/users/not-a-user")
@@ -312,7 +310,7 @@ describe("/api", () => {
         it("PATCH: returns 400 Bad request! when passed a invalid avatar or name value", () => {
           const updatedUser = {
             avatar_url: ["new avatar url"],
-            name: ["new name"]
+            name: ["new name"],
           };
           return request(app)
             .patch("/api/users/butter_bridge")
@@ -327,7 +325,7 @@ describe("/api", () => {
       describe("INVALID METHODS", () => {
         it("status:405", () => {
           const invalidMethods = ["post", "put", "delete"];
-          const methodPromises = invalidMethods.map(method => {
+          const methodPromises = invalidMethods.map((method) => {
             return request(app)
               [method]("/api/users/butter_bridge")
               .expect(405)
@@ -349,7 +347,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body }) => {
             expect(body).to.contain.keys("articles");
-            body.articles.forEach(article => {
+            body.articles.forEach((article) => {
               return expect(article).to.contain.keys(
                 "author",
                 "title",
@@ -368,7 +366,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).to.be.sortedBy("created_at", {
-              descending: true
+              descending: true,
             });
           });
       });
@@ -394,7 +392,7 @@ describe("/api", () => {
           .expect(200)
           .then(({ body: { articles } }) => {
             expect(articles).to.be.sortedBy("created_at", {
-              descending: false
+              descending: false,
             });
           });
       });
@@ -411,7 +409,7 @@ describe("/api", () => {
           .get("/api/articles?author=butter_bridge")
           .expect(200)
           .then(({ body: { articles } }) => {
-            const output = articles.every(article => {
+            const output = articles.every((article) => {
               return article.author === "butter_bridge";
             });
             expect(output).to.be.true;
@@ -438,7 +436,7 @@ describe("/api", () => {
           .get("/api/articles?topic=mitch")
           .expect(200)
           .then(({ body: { articles } }) => {
-            const output = articles.every(article => {
+            const output = articles.every((article) => {
               return article.topic === "mitch";
             });
             expect(output).to.be.true;
@@ -521,7 +519,7 @@ describe("/api", () => {
           .get("/api/articles?title=Student SUES Mitch!")
           .expect(200)
           .then(({ body }) => {
-            const output = body.articles.every(article => {
+            const output = body.articles.every((article) => {
               return article.title === "Student SUES Mitch!";
             });
             expect(output).to.be.true;
@@ -544,7 +542,7 @@ describe("/api", () => {
           title: "New article",
           body: "This is a new article",
           topic: "mitch",
-          author: "butter_bridge"
+          author: "butter_bridge",
         };
         return request(app)
           .post("/api/articles")
@@ -568,7 +566,7 @@ describe("/api", () => {
           title: "New article",
           body: "This is a new article",
           topic: "not a topic",
-          author: "not a user"
+          author: "not a user",
         };
         return request(app)
           .post("/api/articles")
@@ -593,7 +591,7 @@ describe("/api", () => {
           title: ["New article"],
           body: ["This is a new article"],
           topic: "mitch",
-          author: "butter_bridge"
+          author: "butter_bridge",
         };
         return request(app)
           .post("/api/articles")
@@ -608,7 +606,7 @@ describe("/api", () => {
     describe("INVALID METHODS", () => {
       it("status:405", () => {
         const invalidMethods = ["patch", "put", "delete"];
-        const methodPromises = invalidMethods.map(method => {
+        const methodPromises = invalidMethods.map((method) => {
           return request(app)
             [method]("/api/articles")
             .expect(405)
@@ -754,7 +752,7 @@ describe("/api", () => {
         });
         it("PATCH: returns 200 and an object containing the updated article when passed an article_id and body", () => {
           const updatedArticle = {
-            body: "updated article body"
+            body: "updated article body",
           };
           return request(app)
             .patch("/api/articles/1")
@@ -777,7 +775,7 @@ describe("/api", () => {
         it("PATCH: returns 200 and an object containing the updated article when passed an article_id and edits both the votes and body if passed both keys", () => {
           const updatedArticle = {
             inc_votes: 1,
-            body: "updated article body"
+            body: "updated article body",
           };
           return request(app)
             .patch("/api/articles/1")
@@ -800,7 +798,7 @@ describe("/api", () => {
         });
         it("PATCH: returns 400 Bad request! when passed an invalid body value", () => {
           const updatedArticle = {
-            body: ["updated article body"]
+            body: ["updated article body"],
           };
           return request(app)
             .patch("/api/articles/1")
@@ -821,13 +819,8 @@ describe("/api", () => {
               expect(body).to.eql({});
               const votes = { inc_votes: 1 };
               const promises = [
-                request(app)
-                  .get("/api/articles/1")
-                  .expect(404),
-                request(app)
-                  .patch("/api/comments/2")
-                  .send(votes)
-                  .expect(404) // utilising the error setup on our patch comments route if passed a comment  id that doesn't exist
+                request(app).get("/api/articles/1").expect(404),
+                request(app).patch("/api/comments/2").send(votes).expect(404), // utilising the error setup on our patch comments route if passed a comment  id that doesn't exist
               ];
               return Promise.all(promises);
             });
@@ -853,7 +846,7 @@ describe("/api", () => {
       describe("INVALID METHODS", () => {
         it("status:405", () => {
           const invalidMethods = ["post", "put"];
-          const methodPromises = invalidMethods.map(method => {
+          const methodPromises = invalidMethods.map((method) => {
             return request(app)
               [method]("/api/articles/1")
               .expect(405)
@@ -870,7 +863,7 @@ describe("/api", () => {
           it("POST: returns 201 and an object containing the posted comment", () => {
             const comment = {
               username: "butter_bridge",
-              body: "I'll butter your bridge"
+              body: "I'll butter your bridge",
             };
             return request(app)
               .post("/api/articles/1/comments")
@@ -891,7 +884,7 @@ describe("/api", () => {
           it("POST: returns 404 Not found! when passed an article_id that doesn't exist", () => {
             const comment = {
               username: "butter_bridge",
-              body: "I'll butter your bridge"
+              body: "I'll butter your bridge",
             };
             return request(app)
               .post("/api/articles/100/comments")
@@ -904,7 +897,7 @@ describe("/api", () => {
           it("POST: returns 400 Bad request! when passed an invalid article_id", () => {
             const comment = {
               username: "butter_bridge",
-              body: "I'll butter your bridge"
+              body: "I'll butter your bridge",
             };
             return request(app)
               .post("/api/articles/abc/comments")
@@ -917,7 +910,7 @@ describe("/api", () => {
           it("POST: returns 400 Bad request! when passed the wrong or no username/body key", () => {
             const comment = {
               hello: "butter_bridge",
-              byebye: "I'll butter your bridge"
+              byebye: "I'll butter your bridge",
             };
             return request(app)
               .post("/api/articles/1/comments")
@@ -930,7 +923,7 @@ describe("/api", () => {
           it("POST: returns 400 Bad request! when passed an invalid body value", () => {
             const comment = {
               username: 111,
-              body: ["I'll butter your bridge"]
+              body: ["I'll butter your bridge"],
             };
             return request(app)
               .post("/api/articles/1/comments")
@@ -949,7 +942,7 @@ describe("/api", () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body).to.contain.keys("comments");
-                body.comments.forEach(comment => {
+                body.comments.forEach((comment) => {
                   expect(comment).to.contain.keys(
                     "comment_id",
                     "author",
@@ -990,7 +983,7 @@ describe("/api", () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body.comments).to.be.sortedBy("created_at", {
-                  descending: true
+                  descending: true,
                 });
               });
           });
@@ -1000,7 +993,7 @@ describe("/api", () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body.comments).to.be.sortedBy("votes", {
-                  descending: true
+                  descending: true,
                 });
               });
           });
@@ -1010,7 +1003,7 @@ describe("/api", () => {
               .expect(200)
               .then(({ body }) => {
                 expect(body.comments).to.be.sortedBy("created_at", {
-                  descending: false
+                  descending: false,
                 });
               });
           });
@@ -1075,7 +1068,7 @@ describe("/api", () => {
         describe("INVALID METHODS", () => {
           it("status:405", () => {
             const invalidMethods = ["patch", "put", "delete"];
-            const methodPromises = invalidMethods.map(method => {
+            const methodPromises = invalidMethods.map((method) => {
               return request(app)
                 [method]("/api/articles/1/comments")
                 .expect(405)
@@ -1251,7 +1244,7 @@ describe("/api", () => {
       describe("INVALID METHODS", () => {
         it("status:405", () => {
           const invalidMethods = ["get", "post", "put"];
-          const methodPromises = invalidMethods.map(method => {
+          const methodPromises = invalidMethods.map((method) => {
             return request(app)
               [method]("/api/comments/2")
               .expect(405)

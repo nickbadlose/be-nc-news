@@ -2,16 +2,16 @@ const connection = require("../db/connection");
 
 exports.fetchUsers = () => {
   return connection("users")
-    .select("*")
-    .then(users => {
+    .select("username", "avatar_url", "name")
+    .then((users) => {
       return users;
     });
 };
 
-exports.fetchUserById = username => {
+exports.fetchUserById = (username) => {
   return connection("users")
     .where({ username })
-    .then(user => {
+    .then((user) => {
       if (!user.length) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
@@ -45,7 +45,7 @@ exports.updateUserById = (username, avatar_url, name) => {
   }
   return connection("users")
     .where({ username })
-    .modify(query => {
+    .modify((query) => {
       if (avatar_url !== undefined && name !== undefined) {
         query.update({ avatar_url, name });
       }
@@ -57,7 +57,7 @@ exports.updateUserById = (username, avatar_url, name) => {
       }
     })
     .returning("*")
-    .then(userArr => {
+    .then((userArr) => {
       if (!userArr.length) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
