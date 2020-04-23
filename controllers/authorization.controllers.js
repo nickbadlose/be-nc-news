@@ -4,7 +4,6 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const bcrypt = require("bcrypt");
 
 exports.sendToken = (req, res, next) => {
-  console.log(JWT_SECRET);
   const { username, password } = req.body;
   return connection
     .select("*")
@@ -12,7 +11,6 @@ exports.sendToken = (req, res, next) => {
     .where({ username })
     .then(([user]) => {
       if (!user) {
-        console.log("hello");
         next({ status: 401, msg: "invalid username or password" });
       } else {
         return Promise.all([bcrypt.compare(password, user.password), user]);

@@ -9,7 +9,7 @@ The Northcoders News API. All the data you need setup your very own news app ser
 In your terminal type the following commands:
 
 ```bash
-git clone YOUR-CLONED-REPO-URL
+git clone https://github.com/nickbadlose/be-nc-news.git
 
 cd be-nc-news
 ```
@@ -79,6 +79,15 @@ const customConfig = {
 };
 
 module.exports = { ...customConfig[ENV], ...baseConfig };
+```
+
+**You will also need to create your own .env file to store your JWT_SECRET password**
+
+```
+// in .env
+
+JWT_SECRET='YOUR_SECRET_PASSWORD'
+
 ```
 
 ## Running the tests
