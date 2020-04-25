@@ -2,10 +2,10 @@ const { fetchTopics, addTopic } = require("../models/topics.models");
 
 exports.getTopics = (req, res, next) => {
   fetchTopics()
-    .then(topics => {
+    .then((topics) => {
       res.status(200).send({ topics });
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -13,10 +13,10 @@ exports.getTopics = (req, res, next) => {
 exports.postTopic = (req, res, next) => {
   const { slug, description } = req.body;
   addTopic(slug, description)
-    .then(topic => {
+    .then((topic) => {
       res.status(201).send({ topic });
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };

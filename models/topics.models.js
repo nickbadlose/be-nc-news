@@ -2,8 +2,11 @@ const connection = require("../db/connection");
 
 exports.fetchTopics = () => {
   return connection("topics")
-    .select("*")
-    .then(topics => {
+    .select("topics.*")
+    .leftJoin("articles", "topics.slug", "articles.topic")
+    .count({ article_count: "articles.article_id" })
+    .groupBy("topics.slug")
+    .then((topics) => {
       return topics;
     });
 };

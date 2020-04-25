@@ -91,14 +91,18 @@ describe("/api", () => {
 
   describe("/topics", () => {
     describe("GET", () => {
-      it("GET: returns 200 and an object with a key of topics containing an array of topics", () => {
+      it.only("GET: returns 200 and an object with a key of topics containing an array of topics", () => {
         return request(app)
           .get("/api/topics")
           .expect(200)
           .then(({ body }) => {
             expect(body).to.contain.keys("topics");
             body.topics.forEach((topic) => {
-              expect(topic).to.contain.keys("slug", "description");
+              expect(topic).to.contain.keys(
+                "slug",
+                "description",
+                "article_count"
+              );
             });
           });
       });
