@@ -1,4 +1,5 @@
 const connection = require("../db/connection");
+const bcrypt = require("bcrypt");
 
 exports.fetchUsers = () => {
   return connection("users")
@@ -19,17 +20,20 @@ exports.fetchUserById = (username) => {
     });
 };
 
-exports.addUser = (username, avatar_url, name) => {
+exports.addUser = (username, avatar_url = "N/A", name, unencryptedPassword) => {
   if (
     typeof username !== "string" ||
     typeof avatar_url !== "string" ||
-    typeof name !== "string"
+    typeof name !== "string" ||
+    typeof unencryptedPassword !== "string"
   ) {
     return Promise.reject({ status: 400, msg: "Bad request!" });
   }
 
+  const password = bcrypt.hashSync(unencryptedPassword, 10);
+
   return connection("users")
-    .insert({ username, avatar_url, name })
+    .insert({ username, avatar_url, name, password })
     .returning("*")
     .then(([user]) => {
       return user;

@@ -91,7 +91,7 @@ describe("/api", () => {
 
   describe("/topics", () => {
     describe("GET", () => {
-      it.only("GET: returns 200 and an object with a key of topics containing an array of topics", () => {
+      it("GET: returns 200 and an object with a key of topics containing an array of topics", () => {
         return request(app)
           .get("/api/topics")
           .expect(200)
@@ -114,7 +114,7 @@ describe("/api", () => {
           slug: "newTopic",
           description: "This is a new topic",
         };
-        return request(app)
+        return requestDefaults
           .post("/api/topics")
           .send(newTopic)
           .expect(201)
@@ -128,7 +128,7 @@ describe("/api", () => {
           slug: "mitch",
           description: "This is a new topic",
         };
-        return request(app)
+        return requestDefaults
           .post("/api/topics")
           .send(newTopic)
           .expect(400)
@@ -138,7 +138,7 @@ describe("/api", () => {
       });
       it("POST: returns 400 Bad request! when not passed either the slug or description key", () => {
         const newTopic = {};
-        return request(app)
+        return requestDefaults
           .post("/api/topics")
           .send(newTopic)
           .expect(400)
@@ -151,7 +151,7 @@ describe("/api", () => {
           slug: ["new topic"],
           description: ["this is a new article"],
         };
-        return request(app)
+        return requestDefaults
           .post("/api/topics")
           .send(newTopic)
           .expect(400)
@@ -192,13 +192,29 @@ describe("/api", () => {
       });
     });
 
-    describe("POST", () => {
+    describe.only("POST", () => {
       it("POST: returns 201 and the new user", () => {
         const newUser = {
           username: "newUser",
           avatar_url:
             "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
           name: "new user",
+          password: "123",
+        };
+        return request(app)
+          .post("/api/users")
+          .send(newUser)
+          .expect(201)
+          .then(({ body }) => {
+            expect(body).to.contain.keys("user");
+            expect(body.user).to.contain.keys("username", "name");
+          });
+      });
+      it("POST: returns 201 and the new user when no avatar posted", () => {
+        const newUser = {
+          username: "newUser",
+          name: "new user",
+          password: "123",
         };
         return request(app)
           .post("/api/users")
@@ -214,6 +230,7 @@ describe("/api", () => {
           username: "butter_bridge",
           avatar_url:
             "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+          password: "123",
           name: "new user",
         };
         return request(app)
@@ -234,13 +251,14 @@ describe("/api", () => {
             expect(msg).to.equal("Bad request!");
           });
       });
-      it("POST: returns 400 Bad request! when passed an invalid username, name or avatar_url value", () => {
+      it("POST: returns 400 Bad request! when passed an invalid username, name or avatar_url value or password", () => {
         const newUser = {
           username: ["newUser"],
           avatar_url: [
             "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
           ],
           name: ["new user"],
+          password: ["123"],
         };
         return request(app)
           .post("/api/users")

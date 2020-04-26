@@ -2,15 +2,15 @@ const {
   fetchUsers,
   fetchUserById,
   addUser,
-  updateUserById
+  updateUserById,
 } = require("../models/users.models");
 
 exports.getUsers = (req, res, next) => {
   fetchUsers()
-    .then(users => {
+    .then((users) => {
       res.status(200).send({ users });
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -21,18 +21,18 @@ exports.getUserById = (req, res, next) => {
     .then(([user]) => {
       res.status(200).send({ user });
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
 
 exports.postUser = (req, res, next) => {
-  const { username, avatar_url, name } = req.body;
-  addUser(username, avatar_url, name)
-    .then(user => {
+  const { username, avatar_url, name, password } = req.body;
+  addUser(username, avatar_url, name, password)
+    .then((user) => {
       res.status(201).send({ user });
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
@@ -44,7 +44,7 @@ exports.patchUserById = (req, res, next) => {
     .then(([user]) => {
       res.status(200).send({ user });
     })
-    .catch(err => {
+    .catch((err) => {
       next(err);
     });
 };
