@@ -4,6 +4,8 @@ const { getTopics, postTopic } = require("../controllers/topics.controllers");
 
 topicsRouter.route("/").get(getTopics);
 
+// authentication below
+
 topicsRouter.route("/").post(validateToken, postTopic);
 
 module.exports = topicsRouter;

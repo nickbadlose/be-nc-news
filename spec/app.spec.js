@@ -29,6 +29,18 @@ describe("/api", () => {
       });
   });
 
+  describe("GET", () => {
+    it("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
+      return request(app)
+        .get("/api/")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body).to.contain.keys("endpoints");
+          expect(body.endpoints).to.eql(endpoints);
+        });
+    });
+  });
+
   describe("/login", () => {
     it("POST responds with an access token given correct username and password", () =>
       request(app)
@@ -54,18 +66,6 @@ describe("/api", () => {
         .then(({ body: { msg } }) => {
           expect(msg).to.equal("invalid username or password");
         }));
-  });
-
-  describe("GET", () => {
-    it("GET: returns 200 and an endpoints object containing all the possible endpoints for the api", () => {
-      return request(app)
-        .get("/api/")
-        .expect(200)
-        .then(({ body }) => {
-          expect(body).to.contain.keys("endpoints");
-          expect(body.endpoints).to.eql(endpoints);
-        });
-    });
   });
 
   describe("/theEndPointThatWasnt", () => {
@@ -192,7 +192,7 @@ describe("/api", () => {
       });
     });
 
-    describe.only("POST", () => {
+    describe("POST", () => {
       it("POST: returns 201 and the new user", () => {
         const newUser = {
           username: "newUser",
