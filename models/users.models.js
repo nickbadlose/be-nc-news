@@ -34,7 +34,7 @@ exports.addUser = (username, avatar_url = "N/A", name, unencryptedPassword) => {
 
   return connection("users")
     .insert({ username, avatar_url, name, password })
-    .returning("*")
+    .returning(["username", "name", "avatar_url"])
     .then(([user]) => {
       return user;
     });

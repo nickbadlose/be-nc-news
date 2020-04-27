@@ -192,7 +192,7 @@ describe("/api", () => {
       });
     });
 
-    describe("POST", () => {
+    describe.only("POST", () => {
       it("POST: returns 201 and the new user", () => {
         const newUser = {
           username: "newUser",
