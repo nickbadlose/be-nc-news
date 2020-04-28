@@ -9,7 +9,6 @@ exports.getAll = (req, res, next) => {
   const { search } = req.query;
   fetchAll(search.toLowerCase())
     .then((data) => {
-      console.log(data);
       res.status(200).send(data);
     })
     .catch((err) => {

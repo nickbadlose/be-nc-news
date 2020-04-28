@@ -18,8 +18,11 @@ exports.fetchAll = (search) => {
           });
         });
         const bodyMatches = articles.filter((article) => {
-          return article.body.toLowerCase().split(" ").includes(search);
+          return search.split(" ").every((word) => {
+            return article.body.toLowerCase().split(" ").includes(word);
+          });
         });
+        console.log(titleMatches, bodyMatches);
         return [...topic, ...user, ...titleMatches, ...bodyMatches];
       } else {
         const titleMatches = articles.filter((article) => {
