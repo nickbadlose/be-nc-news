@@ -25,7 +25,16 @@ exports.fetchAll = (search) => {
         const authorMatches = articles.filter((article) => {
           return article.author.toLowerCase() === search;
         });
-        return [...topic, ...user, ...titleMatches, ...authorMatches];
+        const bodyMatches = articles.filter((article) => {
+          return article.body.toLowerCase().split(" ").includes(search);
+        });
+        return [
+          ...topic,
+          ...user,
+          ...titleMatches,
+          ...authorMatches,
+          ...bodyMatches,
+        ];
       }
     }
   );
