@@ -4,10 +4,12 @@ const usersRouter = require("./users.router");
 const articlesRouter = require("./articles.router");
 const commentsRouter = require("./comments.router");
 const loginRouter = require("./login.router");
-const { getEndpoints } = require("../controllers/api.controllers");
+const { getEndpoints, getAll } = require("../controllers/api.controllers");
 const { send405Error } = require("../errors/errors");
 
 apiRouter.route("/").get(getEndpoints);
+
+apiRouter.route("/search").get(getAll);
 
 apiRouter.use("/topics", topicsRouter);
 

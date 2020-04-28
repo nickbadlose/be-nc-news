@@ -23,6 +23,7 @@ exports.fetchUserById = (username) => {
 exports.addUser = (username, avatar_url = "N/A", name, unencryptedPassword) => {
   if (
     typeof username !== "string" ||
+    username.split(" ").length > 1 ||
     typeof avatar_url !== "string" ||
     typeof name !== "string" ||
     typeof unencryptedPassword !== "string"
