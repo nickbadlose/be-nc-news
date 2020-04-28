@@ -6,7 +6,7 @@ exports.updateCommentById = (comment_id, votes, body) => {
   }
   return connection("comments")
     .where({ comment_id })
-    .modify(query => {
+    .modify((query) => {
       if (body) {
         query.update({ body });
       }
@@ -15,7 +15,7 @@ exports.updateCommentById = (comment_id, votes, body) => {
       }
     })
     .returning("*")
-    .then(commentArr => {
+    .then((commentArr) => {
       if (!commentArr.length) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       }
@@ -23,11 +23,19 @@ exports.updateCommentById = (comment_id, votes, body) => {
     });
 };
 
-exports.removeCommentById = comment_id => {
+exports.fetchComments = (author) => {
+  return connection("comments")
+    .where({ author })
+    .then((comments) => {
+      return comments;
+    });
+};
+
+exports.removeCommentById = (comment_id) => {
   return connection("comments")
     .where({ comment_id })
     .del()
-    .then(deletedRows => {
+    .then((deletedRows) => {
       if (deletedRows === 0) {
         return Promise.reject({ status: 404, msg: "Not found!" });
       } else return;
