@@ -6,6 +6,7 @@ exports.fetchTopics = () => {
     .leftJoin("articles", "topics.slug", "articles.topic")
     .count({ article_count: "articles.article_id" })
     .groupBy("topics.slug")
+    .orderBy("article_count", "desc")
     .then((topics) => {
       return topics;
     });
