@@ -17,7 +17,10 @@ exports.fetchAll = (search) => {
             return article.title.toLowerCase().split(" ").includes(word);
           });
         });
-        return [...topic, ...user, ...titleMatches];
+        const bodyMatches = articles.filter((article) => {
+          return article.body.toLowerCase().split(" ").includes(search);
+        });
+        return [...topic, ...user, ...titleMatches, ...bodyMatches];
       } else {
         const titleMatches = articles.filter((article) => {
           return article.title.toLowerCase().split(" ").includes(search);
