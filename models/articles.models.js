@@ -114,7 +114,10 @@ exports.fetchArticles = (
       .leftJoin("comments", "articles.article_id", "comments.article_id")
       .count({ comment_count: "comment_id" })
       .groupBy("articles.article_id")
-      .orderBy(sort_by, order)
+      .orderBy([
+        { column: sort_by, order },
+        { column: "created_at", order },
+      ])
       .modify((query) => {
         if (username) query.where("articles.author", username);
         if (topic) query.where("articles.topic", topic);
