@@ -111,7 +111,7 @@ describe("/api", () => {
     describe("POST", () => {
       it("POST: returns 201 and the new topic", () => {
         const newTopic = {
-          slug: "newTopic",
+          slug: "war",
           description: "This is a new topic",
         };
         return requestDefaults
@@ -120,7 +120,11 @@ describe("/api", () => {
           .expect(201)
           .then(({ body }) => {
             expect(body).to.contain.keys("topic");
-            expect(body.topic).to.contain.keys("slug", "description");
+            expect(body.topic).to.contain.keys(
+              "slug",
+              "description",
+              "image_url"
+            );
           });
       });
       it("POST: returns 400 Bad request! when passed a slug that already exists", () => {
@@ -1358,7 +1362,7 @@ describe("/api", () => {
 
       describe("INVALID METHODS", () => {
         it("status:405", () => {
-          const invalidMethods = ["get", "post", "put"];
+          const invalidMethods = ["post", "put"];
           const methodPromises = invalidMethods.map((method) => {
             return request(app)
               [method]("/api/comments/2")
