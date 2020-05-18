@@ -25,7 +25,6 @@ exports.addTopic = (slug, description, image_url) => {
           params: { query: slug, orientation: "squarish" },
         })
         .then(({ data: { results } }) => {
-          console.log(results);
           return results.length
             ? connection("topics")
                 .insert({
