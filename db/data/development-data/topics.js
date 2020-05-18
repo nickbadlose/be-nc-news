@@ -131,4 +131,16 @@ module.exports = [
     image_url:
       "https://images.unsplash.com/photo-1511512578047-dfb367046420?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
   },
+  {
+    description: "Videos of animals are just too cute",
+    slug: "youtube",
+    image_url:
+      "https://images.unsplash.com/photo-1521989116480-519a01ffeb2d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
+  },
+  {
+    description: "Searching for something?",
+    slug: "google",
+    image_url:
+      "https://images.unsplash.com/photo-1572059002053-8cc5ad2f4a38?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max",
+  },
 ];
