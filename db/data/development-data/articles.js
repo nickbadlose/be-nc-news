@@ -339,7 +339,8 @@ module.exports = [
     created_at: 1518339608263,
   },
   {
-    title: "I'm travelling through spain next month, what are the must see's",
+    title:
+      "I'm travelling through spain next month, what are the must see places",
     topic: "travelling",
     author: "jessjelly",
     body:

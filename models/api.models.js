@@ -22,7 +22,6 @@ exports.fetchAll = (search) => {
             return article.body.toLowerCase().split(" ").includes(word);
           });
         });
-        console.log(titleMatches, bodyMatches);
         return [...topic, ...user, ...titleMatches, ...bodyMatches];
       } else {
         const titleMatches = articles.filter((article) => {
