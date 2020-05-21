@@ -2,8 +2,6 @@ const connection = require("../db/connection");
 const axios = require("axios");
 
 exports.fetchTopics = (slug) => {
-  // add a query for topic by slug also check post topic still works
-
   return connection("topics")
     .select("topics.*")
     .leftJoin("articles", "topics.slug", "articles.topic")

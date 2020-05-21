@@ -40,6 +40,12 @@ module.exports = [
     slug: "manchesterunited",
     image_url:
       "https://tse4.mm.bing.net/th?id=OIP.1qMY-GRTHFmBZiW2oNvfsQHaFj&pid=Api&P=0&w=600&h=600",
+    image_thumb:
+      "https://tse4.mm.bing.net/th?id=OIP.1qMY-GRTHFmBZiW2oNvfsQHaFj&pid=Api&P=0&w=200&h=200",
+    image_banner:
+      "https://tse4.mm.bing.net/th?id=OIP.1qMY-GRTHFmBZiW2oNvfsQHaFj&pid=Api&P=0&w=600&h=200&c=7",
+    mobile_banner:
+      "https://tse4.mm.bing.net/th?id=OIP.1qMY-GRTHFmBZiW2oNvfsQHaFj&pid=Api&P=0&w=600&h=200&c=7",
   },
   {
     description: "The smellier, the better",
@@ -58,6 +64,12 @@ module.exports = [
     slug: "twitch",
     image_url:
       "https://tse4.mm.bing.net/th?id=OIP.tW6zPZvl4oXz0DYIuRGBGAHaEK&pid=Api&P=0&w=600&h=600",
+    image_thumb:
+      "https://tse4.mm.bing.net/th?id=OIP.tW6zPZvl4oXz0DYIuRGBGAHaEK&pid=Api&P=0&w=200&h=200",
+    image_banner:
+      "https://tse4.mm.bing.net/th?id=OIP.tW6zPZvl4oXz0DYIuRGBGAHaEK&pid=Api&P=0&w=600&h=200&c=7",
+    mobile_banner:
+      "https://tse4.mm.bing.net/th?id=OIP.tW6zPZvl4oXz0DYIuRGBGAHaEK&pid=Api&P=0&w=600&h=200&c=7",
   },
   {
     description: "Cute and furry friends",
@@ -208,6 +220,12 @@ module.exports = [
     slug: "peepshow",
     image_url:
       "https://th.bing.com/th/id/OIP.jVpzXmvaEUKhkWj2w3RC8AAAAA?w=200&h=200&c=7&o=5&pid=1.7",
+    image_thumb:
+      "https://th.bing.com/th/id/OIP.jVpzXmvaEUKhkWj2w3RC8AAAAA?w=200&h=200&c=7&o=5&pid=1.7",
+    image_banner:
+      "https://th.bing.com/th/id/OIP.nQbxKNiFEAujFYqQUN4cSgHaHa?w=470&h=160&c=7",
+    mobile_banner:
+      "https://th.bing.com/th/id/OIP.nQbxKNiFEAujFYqQUN4cSgHaHa?w=470&h=160&c=7",
   },
   {
     description: "The latest on computers, phones and all things tech",
