@@ -5,12 +5,12 @@ exports.up = function (knex) {
     topicsTable
       .string("image_url")
       .defaultTo(
-        "https://images.unsplash.com/photo-1529243856184-fd5465488984\\?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&fm=jpg&w=400&fit=max"
+        "https://images.unsplash.com/photo-1529243856184-fd5465488984\\?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&fm=jpg&w=400&fit=crop&ar=1:1"
       );
     topicsTable
       .string("image_thumb")
       .defaultTo(
-        "https://images.unsplash.com/photo-1529243856184-fd5465488984\\?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&fm=jpg&w=200&fit=max"
+        "https://images.unsplash.com/photo-1529243856184-fd5465488984\\?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&fm=jpg&w=200&fit=crop&ar=1:1"
       );
     topicsTable
       .string("image_banner")

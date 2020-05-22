@@ -33,8 +33,10 @@ exports.addTopic = (slug, description, image) => {
                 .insert({
                   slug,
                   description,
-                  image_url: results[0].urls.small,
-                  image_thumb: results[0].urls.thumb,
+                  image_url:
+                    results[0].urls.raw + "&fm=jpg&w=400&fit=crop&ar=1:1",
+                  image_thumb:
+                    results[0].urls.raw + "&fm=jpg&w=200&fit=crop&ar=1:1",
                   image_banner:
                     results[0].urls.raw +
                     "&auto=format&w=1300&h=400&fit=crop&crop=faces",
