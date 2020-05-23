@@ -43,6 +43,9 @@ exports.addTopic = (slug, description, image) => {
                   mobile_banner:
                     results[0].urls.raw +
                     "&auto=format&w=600&h=200&fit=crop&crop=faces",
+                  mobile_banner:
+                    results[0].urls.raw +
+                    "&auto=format&w=400&h=226&fit=crop&crop=faces",
                 })
                 .returning("*")
             : connection("topics")
@@ -63,6 +66,7 @@ exports.addTopic = (slug, description, image) => {
           image_thumb: image.thumb,
           image_banner: image.banner,
           mobile_banner: image.mobile_banner,
+          image_card: image.card,
         })
         .returning("*")
         .then(([topic]) => {

@@ -22,6 +22,11 @@ exports.up = function (knex) {
       .defaultTo(
         "https://images.unsplash.com/photo-1529243856184-fd5465488984\\?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&w=600&h=200&fit=crop&crop=edges"
       );
+    topicsTable
+      .string("image_card")
+      .defaultTo(
+        "https://images.unsplash.com/photo-1529243856184-fd5465488984\\?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&w=400&h=226&fit=crop&crop=edges"
+      );
   });
 };
 
