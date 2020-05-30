@@ -43,7 +43,7 @@ module.exports = [
   },
   {
     description: "The biggest football club in the world",
-    slug: "manchesterunited",
+    slug: "mufc",
     image_url:
       "https://th.bing.com/th/id/OIP.TXojvRI6zxQDDN5pI1ar9wHaHa?w=400&h=400&c=7&o=5&pid=1.7",
     image_thumb:
