@@ -9,7 +9,6 @@ commentsRouter.route("/users/:username").get(getComments);
 
 commentsRouter
   .route("/:comment_id")
-  .get(getComments)
   .patch(patchCommentById)
   .delete(deleteCommentById);
 

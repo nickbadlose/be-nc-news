@@ -25,7 +25,9 @@ exports.updateCommentById = (comment_id, votes, body) => {
 
 exports.fetchComments = (author) => {
   return connection("comments")
-    .where({ author })
+    .select("comments.*", "articles.title")
+    .where("comments.author", author)
+    .leftJoin("articles", "comments.article_id", "articles.article_id")
     .then((comments) => {
       return comments;
     });
