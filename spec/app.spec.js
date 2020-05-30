@@ -347,7 +347,7 @@ describe("/api", () => {
               expect(body.user.name).to.equal("jonny");
             });
         });
-        it("PATCH: returns 200 and an object containing the unedited article when passed an empty body or a body with no avatar or name keys", () => {
+        it("PATCH: returns 200 and an object containing the unedited user when passed an empty body or a body with no avatar or name keys", () => {
           const updatedUser = {};
           return request(app)
             .patch("/api/users/butter_bridge")

@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 
 exports.fetchUsers = () => {
   return connection("users")
-    .select("username", "avatar_url", "name")
+    .select("username", "avatar_url", "name", "joined")
     .then((users) => {
       return users;
     });
@@ -11,6 +11,7 @@ exports.fetchUsers = () => {
 
 exports.fetchUserById = (username) => {
   return connection("users")
+    .select("username", "avatar_url", "name", "joined")
     .where({ username })
     .then((user) => {
       if (!user.length) {
