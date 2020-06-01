@@ -2,7 +2,7 @@ const connection = require("../db/connection");
 
 exports.fetchAll = (search) => {
   const searchUsers = connection("users")
-    .select("username", "avatar_url")
+    .select("username", "avatar_url", "joined")
     .where("username", search);
 
   const searchArticles = connection("articles").orderBy("created_at", "desc");
@@ -33,12 +33,16 @@ exports.fetchAll = (search) => {
         const bodyMatches = articles.filter((article) => {
           return article.body.toLowerCase().split(" ").includes(search);
         });
+        const topicMatches = articles.filter((article) => {
+          return article.topic.toLowerCase() === search;
+        });
         return [
           ...topic,
           ...user,
           ...titleMatches,
           ...authorMatches,
           ...bodyMatches,
+          ...topicMatches,
         ];
       }
     }
