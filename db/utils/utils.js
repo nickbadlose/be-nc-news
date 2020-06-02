@@ -3,8 +3,10 @@ const bcrypt = require("bcrypt");
 exports.formatDates = (list) => {
   return list.map((object) => {
     const newObject = { ...object };
-    let date = new Date(newObject.created_at);
-    newObject.created_at = date.toJSON();
+    if (newObject.created_at !== undefined) {
+      let date = new Date(newObject.created_at);
+      newObject.created_at = date.toJSON();
+    }
     return newObject;
   });
 };

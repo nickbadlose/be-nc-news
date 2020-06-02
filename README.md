@@ -130,7 +130,7 @@ try going to http://localhost:9090/api/articles and see what comes back.
 
 Should you wish to host your API follow the instructions in the hosting.md file in this repo. This README uses heroku to host the app.
 
-**Here is a link to my hosted version: https://not-quite-reddit.herokuapp.com/api**
+**Here is a link to my hosted version: https://not-quite-reddit.herokuapp.com/api .**
 
 ## Links to APP/API
 
