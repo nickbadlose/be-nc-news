@@ -368,7 +368,7 @@ module.exports = [
     topic: "dogs",
     author: "jessjelly",
     body:
-      "Guide dogs (colloquially known in the USA as seeing eye dogs[1]) are assistance dogs trained to lead blind and visually impaired people around obstacles. Although dogs can be trained to navigate various obstacles, they are red–green color blind and incapable of interpreting street signs. The human does the directing, based on skills acquired through previous mobility training. The handler might be likened to an aircraft's navigator, who must know how to get from one place to another, and the dog is the pilot, who gets them there safely. In several countries guide dogs, along with most service and hearing dogs, are exempt from regulations against the presence of animals in places such as restaurants and public transportation.",
+      "Guide dogs (colloquially known in the USA as seeing eye dogs) are assistance dogs trained to lead blind and visually impaired people around obstacles. Although dogs can be trained to navigate various obstacles, they are red–green color blind and incapable of interpreting street signs. The human does the directing, based on skills acquired through previous mobility training. The handler might be likened to an aircraft's navigator, who must know how to get from one place to another, and the dog is the pilot, who gets them there safely. In several countries guide dogs, along with most service and hearing dogs, are exempt from regulations against the presence of animals in places such as restaurants and public transportation.",
     created_at: 1486587619082,
   },
   {
@@ -378,7 +378,6 @@ module.exports = [
     author: "jessjelly",
     body:
       "The cat (Felis catus) is a domestic species of small carnivorous mammal. It is the only domesticated species in the family Felidae and is often referred to as the domestic cat to distinguish it from the wild members of the family. A cat can either be a house cat, a farm cat or a feral cat; the latter ranges freely and avoids human contact. Domestic cats are valued by humans for companionship and their ability to hunt rodents. About 60 cat breeds are recognized by various cat registries.",
-    created_at: 1518339608263,
   },
   {
     votes: 19,

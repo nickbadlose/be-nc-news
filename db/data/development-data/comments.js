@@ -2724,17 +2724,15 @@ module.exports = [
     body:
       "Sunt omnis pariatur dignissimos quibusdam dolore ut non velit autem. Omnis voluptatibus qui aut sunt ut unde. Ut eaque excepturi numquam quis occaecati. Repellat esse voluptas velit eveniet ut pariatur natus. Velit voluptas nostrum quia dignissimos quisquam incidunt.",
     belongs_to: "Should cats be kept as house pets?",
-    created_by: "jessjelly",
+    created_by: "tickle122",
     votes: -3,
-    created_at: 1578960000000,
   },
   {
     body:
       "Reiciendis molestias ut possimus enim voluptatem cumque nam possimus rem. Quod sequi porro et velit dolor ut cupiditate perferendis. Cum omnis omnis sit quia maiores quos qui. Consequuntur error distinctio dolores.",
     belongs_to: "Should cats be kept as house pets?",
-    created_by: "jessjelly",
+    created_by: "grumpy19",
     votes: 0,
-    created_at: 1589811178449,
   },
   {
     body:
