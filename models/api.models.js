@@ -17,7 +17,7 @@ exports.fetchAll = (search) => {
         const titleMatches = articles.filter((article) => {
           return search.split(" ").every((word) => {
             if (article.title.toLowerCase().split(" ").includes(word)) {
-              matchIds.article.article_id = true;
+              matchIds[article.article_id] = true;
               return true;
             }
           });
@@ -26,8 +26,8 @@ exports.fetchAll = (search) => {
         const bodyMatches = articles.filter((article) => {
           return search.split(" ").every((word) => {
             if (article.body.toLowerCase().split(" ").includes(word)) {
-              if ((matchIds.article.article_id = undefined)) {
-                matchIds.article.article_id = true;
+              if (matchIds[article.article_id] === undefined) {
+                matchIds[article.article_id] = true;
                 return true;
               }
             }
@@ -40,15 +40,15 @@ exports.fetchAll = (search) => {
 
         const titleMatches = articles.filter((article) => {
           if (article.title.toLowerCase().split(" ").includes(search)) {
-            matchIds.article.article_id = true;
+            matchIds[article.article_id] = true;
             return true;
           }
         });
 
         const authorMatches = articles.filter((article) => {
           if (article.author.toLowerCase() === search) {
-            if ((matchIds.article.article_id = undefined)) {
-              matchIds.article.article_id = true;
+            if (matchIds[article.article_id] === undefined) {
+              matchIds[article.article_id] = true;
               return true;
             }
           }
@@ -56,8 +56,8 @@ exports.fetchAll = (search) => {
 
         const bodyMatches = articles.filter((article) => {
           if (article.body.toLowerCase().split(" ").includes(search)) {
-            if ((matchIds.article.article_id = undefined)) {
-              matchIds.article.article_id = true;
+            if (matchIds[article.article_id] === undefined) {
+              matchIds[article.article_id] = true;
               return true;
             }
           }
@@ -65,8 +65,8 @@ exports.fetchAll = (search) => {
 
         const topicMatches = articles.filter((article) => {
           if (article.topic.toLowerCase() === search) {
-            if ((matchIds.article.article_id = undefined)) {
-              matchIds.article.article_id = true;
+            if (matchIds[article.article_id] === undefined) {
+              matchIds[article.article_id] = true;
               return true;
             }
           }
