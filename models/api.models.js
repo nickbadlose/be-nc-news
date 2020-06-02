@@ -5,7 +5,12 @@ exports.fetchAll = (search) => {
     .select("username", "avatar_url", "joined")
     .where("username", search);
 
-  const searchArticles = connection("articles").orderBy("created_at", "desc");
+  const searchArticles = connection("articles")
+    .select("articles.*")
+    .orderBy("created_at", "desc")
+    .leftJoin("comments", "articles.article_id", "comments.article_id")
+    .count({ comment_count: "comment_id" })
+    .groupBy("articles.article_id");
 
   const searchTopics = connection("topics").where("slug", search);
 
