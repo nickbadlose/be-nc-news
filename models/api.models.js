@@ -15,23 +15,31 @@ exports.fetchAll = (search) => {
         const matchIds = {};
 
         const titleMatches = articles.filter((article) => {
-          return search.split(" ").every((word) => {
-            if (article.title.toLowerCase().split(" ").includes(word)) {
-              matchIds[article.article_id] = true;
-              return true;
-            }
-          });
+          if (
+            search.split(" ").every((word) => {
+              if (article.title.toLowerCase().split(" ").includes(word)) {
+                return true;
+              }
+            })
+          ) {
+            matchIds[article.article_id] = true;
+            return true;
+          }
         });
 
         const bodyMatches = articles.filter((article) => {
-          return search.split(" ").every((word) => {
-            if (article.body.toLowerCase().split(" ").includes(word)) {
-              if (matchIds[article.article_id] === undefined) {
-                matchIds[article.article_id] = true;
-                return true;
+          if (
+            search.split(" ").every((word) => {
+              if (article.body.toLowerCase().split(" ").includes(word)) {
+                if (matchIds[article.article_id] === undefined) {
+                  return true;
+                }
               }
-            }
-          });
+            })
+          ) {
+            matchIds[article.article_id] = true;
+            return true;
+          }
         });
 
         return [...topic, ...user, ...titleMatches, ...bodyMatches];
