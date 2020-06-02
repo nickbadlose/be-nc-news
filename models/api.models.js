@@ -12,7 +12,12 @@ exports.fetchAll = (search) => {
     .count({ comment_count: "comment_id" })
     .groupBy("articles.article_id");
 
-  const searchTopics = connection("topics").where("slug", search);
+  const searchTopics = connection("topics")
+    .select("topics.*")
+    .where("slug", search)
+    .leftJoin("articles", "topics.slug", "articles.topic")
+    .count({ article_count: "articles.article_id" })
+    .groupBy("topics.slug");
 
   return Promise.all([searchUsers, searchArticles, searchTopics]).then(
     ([user, articles, topic]) => {
