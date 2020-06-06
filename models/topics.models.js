@@ -43,7 +43,7 @@ exports.addTopic = (slug, description, image) => {
                   mobile_banner:
                     results[0].urls.raw +
                     "&auto=format&w=600&h=200&fit=crop&crop=faces",
-                  mobile_banner:
+                  image_card:
                     results[0].urls.raw +
                     "&auto=format&w=400&h=226&fit=crop&crop=faces",
                 })

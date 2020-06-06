@@ -372,7 +372,7 @@ module.exports = [
     created_at: 1486587619082,
   },
   {
-    votes: 26,
+    votes: 28,
     title: "Should cats be kept as house pets?",
     topic: "cats",
     author: "jessjelly",
@@ -408,7 +408,7 @@ module.exports = [
     created_at: 1545926029053,
   },
   {
-    votes: 24,
+    votes: 23,
     title: "I can't get enough of Stephen Hawking",
     topic: "physics",
     author: "weegembump",
@@ -444,7 +444,7 @@ module.exports = [
     created_at: 1473489002835,
   },
   {
-    votes: 23,
+    votes: 27,
     title: "Our sun is not a big star",
     topic: "space",
     author: "happyamy2016",
