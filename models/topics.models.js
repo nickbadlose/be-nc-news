@@ -13,7 +13,7 @@ exports.fetchTopics = (slug, limit = 12, p = 1) => {
         if (slug) query.where("topics.slug", slug);
       })
       .limit(limit)
-      .offset((p - 1) * 10),
+      .offset((p - 1) * 12),
     getTopicCount(),
   ];
 
@@ -81,6 +81,7 @@ exports.addTopic = (slug, description, image) => {
         })
         .returning("*")
         .then(([topic]) => {
+          console.log(topic);
           return topic;
         });
 };
