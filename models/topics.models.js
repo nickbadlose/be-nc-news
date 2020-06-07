@@ -2,20 +2,29 @@ const connection = require("../db/connection");
 const axios = require("axios");
 
 exports.fetchTopics = (slug, limit = 12, p = 1) => {
-  return connection("topics")
-    .select("topics.*")
-    .leftJoin("articles", "topics.slug", "articles.topic")
-    .count({ article_count: "articles.article_id" })
-    .groupBy("topics.slug")
-    .orderBy("article_count", "desc")
-    .modify((query) => {
-      if (slug) query.where("topics.slug", slug);
-    })
-    .limit(limit)
-    .offset((p - 1) * 10)
-    .then((topics) => {
-      return topics;
-    });
+  const promises = [
+    connection("topics")
+      .select("topics.*")
+      .leftJoin("articles", "topics.slug", "articles.topic")
+      .count({ article_count: "articles.article_id" })
+      .groupBy("topics.slug")
+      .orderBy("article_count", "desc")
+      .modify((query) => {
+        if (slug) query.where("topics.slug", slug);
+      })
+      .limit(limit)
+      .offset((p - 1) * 10),
+    getTopicCount(),
+  ];
+
+  return Promise.all(promises).then(([topicsArr, total_count]) => {
+    const topics = {
+      topics: topicsArr,
+      total_count,
+    };
+
+    return topics;
+  });
 };
 
 exports.addTopic = (slug, description, image) => {
@@ -74,4 +83,12 @@ exports.addTopic = (slug, description, image) => {
         .then(([topic]) => {
           return topic;
         });
+};
+
+const getTopicCount = () => {
+  return connection("topics")
+    .count({ total_count: "slug" })
+    .then(([{ total_count }]) => {
+      return total_count;
+    });
 };
