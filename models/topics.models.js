@@ -1,7 +1,7 @@
 const connection = require("../db/connection");
 const axios = require("axios");
 
-exports.fetchTopics = (slug) => {
+exports.fetchTopics = (slug, limit = 12, p = 1) => {
   return connection("topics")
     .select("topics.*")
     .leftJoin("articles", "topics.slug", "articles.topic")
@@ -11,6 +11,8 @@ exports.fetchTopics = (slug) => {
     .modify((query) => {
       if (slug) query.where("topics.slug", slug);
     })
+    .limit(limit)
+    .offset((p - 1) * 10)
     .then((topics) => {
       return topics;
     });
