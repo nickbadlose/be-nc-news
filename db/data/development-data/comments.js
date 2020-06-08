@@ -2736,6 +2736,76 @@ module.exports = [
   },
   {
     body:
+      "Sunt omnis pariatur dignissimos quibusdam dolore ut non velit autem. Omnis voluptatibus qui aut sunt ut unde. Ut eaque excepturi numquam quis occaecati. Repellat esse voluptas velit eveniet ut pariatur natus. Velit voluptas nostrum quia dignissimos quisquam incidunt.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "jessjelly",
+    votes: -3,
+  },
+  {
+    body:
+      "Distinctio laudantium consequatur exercitationem enim magni quod est commodi. Harum consequatur est maiores ipsum accusamus impedit perferendis nobis ipsam. Adipisci excepturi itaque maiores deserunt deserunt occaecati iste. Consectetur non nostrum ex voluptatem in laborum sed ut.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "grumpy19",
+    votes: -3,
+  },
+  {
+    body:
+      "Reiciendis molestias ut possimus enim voluptatem cumque nam possimus rem. Quod sequi porro et velit dolor ut cupiditate perferendis. Cum omnis omnis sit quia maiores quos qui. Consequuntur error distinctio dolores.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "jessjelly",
+    votes: 0,
+  },
+  {
+    body:
+      "Velit excepturi placeat qui. Sed et sint molestias ut temporibus. Odit nulla rerum vitae ut omnis asperiores molestias odio. Dolorem pariatur molestiae rerum sunt enim assumenda mollitia dicta est.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "cooljmessy",
+    votes: 11,
+  },
+  {
+    body:
+      "Distinctio laudantium consequatur exercitationem enim magni quod est commodi. Harum consequatur est maiores ipsum accusamus impedit perferendis nobis ipsam. Adipisci excepturi itaque maiores deserunt deserunt occaecati iste. Consectetur non nostrum ex voluptatem in laborum sed ut.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "grumpy19",
+    votes: -3,
+  },
+  {
+    body:
+      "Expedita non veritatis dicta blanditiis ratione qui et. Corrupti sapiente accusantium molestiae vel nemo quia ullam. Ut distinctio aut autem fuga ullam et quod vero architecto. Sapiente voluptatem neque.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "tickle122",
+    votes: 3,
+  },
+  {
+    body:
+      "Corporis adipisci eum dignissimos inventore qui excepturi dolorum. Illum dicta eos ex. Dolor et ex vel et amet alias non eos sunt. Itaque dolor et est consectetur magni. Dignissimos quis ut quia architecto facere enim qui ducimus.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "happyamy2016",
+    votes: 2,
+  },
+  {
+    body:
+      "Et inventore voluptas sit aliquid nihil et qui maxime sed. Consectetur sit voluptatem corrupti modi harum quia quia. Eius rerum tempora et.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "tickle122",
+    votes: 2,
+  },
+  {
+    body:
+      "Velit excepturi placeat qui. Sed et sint molestias ut temporibus. Odit nulla rerum vitae ut omnis asperiores molestias odio. Dolorem pariatur molestiae rerum sunt enim assumenda mollitia dicta est.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "cooljmessy",
+    votes: 11,
+  },
+  {
+    body:
+      "Distinctio laudantium consequatur exercitationem enim magni quod est commodi. Harum consequatur est maiores ipsum accusamus impedit perferendis nobis ipsam. Adipisci excepturi itaque maiores deserunt deserunt occaecati iste. Consectetur non nostrum ex voluptatem in laborum sed ut.",
+    belongs_to: "Should cats be kept as house pets?",
+    created_by: "grumpy19",
+    votes: -3,
+  },
+  {
+    body:
       "Maiores labore error debitis earum aliquid. Vel omnis a qui sint voluptatem aut. Sint ullam error velit.",
     belongs_to: "Why guide dogs are just as important as ever!",
     created_by: "cooljmessy",
