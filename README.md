@@ -1,6 +1,6 @@
 # NC-News API
 
-The Northcoders News API. All the data you need setup your very own news app server/database.
+The Northcoders News API, all the data you need setup your very own news app server/database.
 
 ## Getting Started
 
